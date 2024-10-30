@@ -1,45 +1,47 @@
-import { redirect } from 'next/navigation'; 
-import { getAllMarkdownFiles } from '@/utils/markdown/getFiles';
-import fs from 'fs';
-import path from 'path';
-import {remark} from 'remark';
+import { redirect } from 'next/navigation';
+import { remark } from 'remark';
 import html from 'remark-html';
 import Breadcrumbs from '@/components/Breadcumbs';
+import { getNoteByPath, getAllNotePaths } from '@/utils/db';
 
 interface NotePageProps {
-  params: Promise<{ slug: string[] }>; // Matches the dynamic route params
+  params: Promise<{ slug: string[] }>;
 }
 
-type NoteContent = Promise<{ content: string; title: string }>
+type NoteContent = Promise<{ content: string; title: string }>;
 
 // Define a function to fetch and process note content
 async function getNoteContent(slug: string[]): NoteContent {
-    const noteDirectory = process.env.NOTE_DIRECTORY || 'src/notes';
-    let notePath = path.join(process.cwd(), noteDirectory, ...slug) + '.md';
+  // Convert slug array to path format matching the database - always use forward slashes
+  const notePath = slug.join('/') + '.md';
   
-    // Check if the path points to a folder (i.e., no specific .md file)
-    if (!fs.existsSync(notePath) && fs.existsSync(path.join(process.cwd(), noteDirectory, ...slug, 'index.md'))) {
-      notePath = path.join(process.cwd(), noteDirectory, ...slug, 'index.md');
-    }
-  
-    // Read and process the markdown content with remark
-    const content = fs.readFileSync(notePath, 'utf8');
-    const processedContent = await remark().use(html).process(content);
-    const title = slug[slug.length - 1] || 'Home'; // Set the last slug segment as title, or default to 'Home'
-  
+  console.log(`Fetching note by path: ${notePath}`);
+  const note = await getNoteByPath(notePath);
+  if (!note) {
+    console.log(`Note not found: ${notePath}`);
+    // Check for index.md
+    const indexPath = [...slug, 'index'].join('/') + '.md';
+    console.log(`Checking index: ${indexPath}`);
+    const indexNote = await getNoteByPath(indexPath);
+    if (!indexNote) throw new Error('Note not found');
     return {
-      content: processedContent.toString(),
-      title,
+      content: (await remark().use(html).process(indexNote.content)).toString(),
+      title: indexNote.title,
     };
   }
+  console.log(`Note found: ${note.title}`);
+
+  return {
+    content: (await remark().use(html).process(note.content)).toString(),
+    title: note.title,
+  };
+}
 
 // Main NotePage component
 export default async function NotePage({ params }: NotePageProps) {
+  const { slug } = await params;
 
-    const {slug} = await params;
-
- // Redirect if last segment is "index"
- if (slug[slug.length - 1].toLowerCase() === 'index') {
+  if (slug[slug.length - 1].toLowerCase() === 'index') {
     const parentSlug = slug.slice(0, -1).join('/');
     redirect(`/${parentSlug}`);
   }
@@ -47,30 +49,24 @@ export default async function NotePage({ params }: NotePageProps) {
   try {
     const { content, title } = await getNoteContent(slug);
     return (
-        <div>
-            <Breadcrumbs slug={slug} />
-            <h1>{title}</h1>
-            <div dangerouslySetInnerHTML={{ __html: content }} />
-        </div>
+      <div>
+        <Breadcrumbs slug={slug} />
+        <h1>{title}</h1>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+      </div>
     );
   } catch {
-      return <div>{"404 (oopsie) - il semble que cet article n'existe pas"}</div>; // Customize as needed
+    return <div>{"404 (oopsie) - il semble que cet article n'existe pas"}</div>;
   }
 }
 
-// Define static params function to generate paths for each markdown file
+// Update static params to use database
 export async function generateStaticParams() {
-    const noteDirectory = process.env.NOTE_DIRECTORY;
-    if (!noteDirectory) {
-        throw new Error('Error: NOTE_DIRECTORY environment variable is not defined. Please set NOTE_DIRECTORY in your environment.');
-    }
-
-    const allMarkdownFiles = getAllMarkdownFiles(noteDirectory);
-
-    return allMarkdownFiles.map((filePath) => ({
-      slug: filePath
-        .replace(noteDirectory + '/', '') // Remove the base note directory
-        .replace(/\.md$/, '') // Remove file extension
-        .split('/'), // Split for nested folders
-    }));
-}
+  const paths = await getAllNotePaths();
+  
+  return paths.map((filePath: string) => ({
+    slug: filePath
+      .replace(/\.md$/, '')
+      .split('/'),
+  }));
+} 

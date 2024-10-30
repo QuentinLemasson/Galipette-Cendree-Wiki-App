@@ -1,5 +1,0 @@
-Lorsqu'un personnage est poussé, il est déplacé de force d'un certain nombre d'espace. Ce nombre d'espace ainsi que la direction sont indiqués par la compétence ou l'action utilisé pour pousser le personnage.
-
-Si un personnage se trouve dans l'impossibilité d'être déplacé (s'il se trouve contre un mur par exemple), il subit à la place autant de dégâts contendant que d'espaces de poussée restants. Si le personnage est poussé contre un autre personnage, ils subissent la moitié des dégâts chacun. Etre poussé contre un objet fragile ou destructible inflige un dégât contondant au personnage et réduit la distance de poussée de 1.
-
-Lorsqu'un personnage est poussé, la distance de poussée peut être réduite de deux espaces pour qu'il tombe au sol. Ce choix peut être fait par le pousseur, ou le poussé.
