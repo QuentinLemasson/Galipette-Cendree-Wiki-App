@@ -1,8 +1,15 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"],
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error"
+  },
   "overrides": [
     {
-      // enable 'require' import for db scripts
       "files": ["db/**/*"],
       "rules": {
         "@typescript-eslint/no-require-imports": "off"
