@@ -13,14 +13,14 @@ type NoteContent = Promise<{ content: string; title: string }>;
 // Define a function to fetch and process note content
 async function getNoteContent(slug: string[]): NoteContent {
   // Convert slug array to path format matching the database - always use forward slashes
-  const notePath = slug.join('/') + '.md';
+  const notePath = slug.join('/');
   
   console.log(`Fetching note by path: ${notePath}`);
   const note = await getNoteByPath(notePath);
   if (!note) {
     console.log(`Note not found: ${notePath}`);
     // Check for index.md
-    const indexPath = [...slug, 'index'].join('/') + '.md';
+    const indexPath = [...slug, 'index'].join('/');
     console.log(`Checking index: ${indexPath}`);
     const indexNote = await getNoteByPath(indexPath);
     if (!indexNote) throw new Error('Note not found');
@@ -66,7 +66,6 @@ export async function generateStaticParams() {
   
   return paths.map((filePath: string) => ({
     slug: filePath
-      .replace(/\.md$/, '')
       .split('/'),
   }));
 } 

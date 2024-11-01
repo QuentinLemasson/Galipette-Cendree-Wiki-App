@@ -4,6 +4,10 @@ const { Client } = require('pg');
 const yaml = require('js-yaml');
 require('dotenv').config({ path: '.env.local' });
 
+const formatArticlePath = (filePath) => {
+    return filePath.replace(`${process.env.VAULT_PATH}\\`, '').replace(/\\/g, '/').replace('.md', '').replaceAll(' ', '_');
+}
+
 const extractMetadata = (content) => {
   try {
     const matches = content.match(/^---\n([\s\S]*?)\n---/);
@@ -47,13 +51,13 @@ const importVaultContent = async (client, directory) => {
                     [
                         entry.replace('.md', ''),
                         content,
-                        filePath.replace(`${process.env.VAULT_PATH.replace(/\//g, '\\')}\\`, ''),
+                        formatArticlePath(filePath),
                         JSON.stringify(metadata || {})
                     ]
                 );
                 
                 console.log('*********************');
-                console.log(`Imported: ${filePath}`);
+                console.log(`Imported: ${formatArticlePath(filePath)}`);
                 console.log('Metadata:', metadata);
             } catch (error) {
                 console.error(`Error importing file ${filePath}:`, error);
