@@ -1,5 +1,5 @@
-// Type definitions for better TypeScript support
 export interface Article {
+  id: number;
   title: string;
   content: string;
   path: string;
@@ -9,8 +9,8 @@ export interface Article {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
 /**
- * Retrieves a article from the database by its path
- * @param path - The path of the article including .md extension
+ * Retrieves a article from the API by its path
+ * @param path - The path of the article (without .md extension)
  * @returns The article object or null if not found
  */
 export async function getArticleByPath(path: string): Promise<Article | null> {
@@ -20,16 +20,15 @@ export async function getArticleByPath(path: string): Promise<Article | null> {
       if (response.status === 404) return null;
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
     return await response.json();
   } catch (error) {
-    console.error("Error fetching article:", error);
+    console.error("Error fetching article by path:", error);
     throw error;
   }
 }
 
 /**
- * Retrieves all article paths from the database
+ * Retrieves all article paths from the API
  * @returns Array of article paths
  */
 export async function getAllArticlePaths(): Promise<string[]> {

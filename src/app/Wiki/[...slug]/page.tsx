@@ -1,53 +1,53 @@
-import { redirect } from 'next/navigation';
-import { remark } from 'remark';
-import html from 'remark-html';
-import Breadcrumbs from '@/components/Breadcumbs';
-import { getNoteByPath, getAllNotePaths } from '@/utils/db';
+import { redirect } from "next/navigation";
+import { remark } from "remark";
+import html from "remark-html";
+import Breadcrumbs from "@/components/Breadcumbs";
+import { getArticleByPath, getAllArticlePaths } from "@/utils/db.server";
 
-interface NotePageProps {
+interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
 }
 
-type NoteContent = Promise<{ content: string; title: string }>;
+type ArticleContent = Promise<{ content: string; title: string }>;
 
-// Define a function to fetch and process note content
-async function getNoteContent(slug: string[]): NoteContent {
-  // Convert slug array to path format matching the database - always use forward slashes
-  const notePath = slug.join('/');
-  
-  console.log(`Fetching note by path: ${notePath}`);
-  const note = await getNoteByPath(notePath);
-  if (!note) {
-    console.log(`Note not found: ${notePath}`);
+async function getArticleContent(slug: string[]): ArticleContent {
+  const articlePath = slug.join("/") + ".md";
+
+  console.log(`Fetching article by path: ${articlePath}`);
+  const article = await getArticleByPath(articlePath);
+  if (!article) {
+    console.log(`Article not found: ${articlePath}`);
     // Check for index.md
-    const indexPath = [...slug, 'index'].join('/');
+    const indexPath = [...slug, "index"].join("/") + ".md";
     console.log(`Checking index: ${indexPath}`);
-    const indexNote = await getNoteByPath(indexPath);
-    if (!indexNote) throw new Error('Note not found');
+    const indexArticle = await getArticleByPath(indexPath);
+    if (!indexArticle) throw new Error("Article not found");
     return {
-      content: (await remark().use(html).process(indexNote.content)).toString(),
-      title: indexNote.title,
+      content: (
+        await remark().use(html).process(indexArticle.content)
+      ).toString(),
+      title: indexArticle.title,
     };
   }
-  console.log(`Note found: ${note.title}`);
+  console.log(`Article found: ${article.title}`);
 
   return {
-    content: (await remark().use(html).process(note.content)).toString(),
-    title: note.title,
+    content: (await remark().use(html).process(article.content)).toString(),
+    title: article.title,
   };
 }
 
-// Main NotePage component
-export default async function NotePage({ params }: NotePageProps) {
+// Main ArticlePage component
+export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
 
-  if (slug[slug.length - 1].toLowerCase() === 'index') {
-    const parentSlug = slug.slice(0, -1).join('/');
+  if (slug[slug.length - 1].toLowerCase() === "index") {
+    const parentSlug = slug.slice(0, -1).join("/");
     redirect(`/${parentSlug}`);
   }
 
   try {
-    const { content, title } = await getNoteContent(slug);
+    const { content, title } = await getArticleContent(slug);
     return (
       <div>
         <Breadcrumbs slug={slug} />
@@ -60,12 +60,11 @@ export default async function NotePage({ params }: NotePageProps) {
   }
 }
 
-// Update static params to use database
 export async function generateStaticParams() {
-  const paths = await getAllNotePaths();
-  
+  console.log("Generating static params");
+  const paths = await getAllArticlePaths();
+
   return paths.map((filePath: string) => ({
-    slug: filePath
-      .split('/'),
+    slug: filePath.replace(/\.md$/, "").split("/"),
   }));
-} 
+}
