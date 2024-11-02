@@ -65,6 +65,7 @@ export async function getAllArticlePaths(): Promise<string[]> {
     const result = await client.query<{ path: string }>(
       "SELECT path FROM articles ORDER BY path"
     );
+    console.log("All article paths:", result.rows);
     return result.rows.map(row => row.path);
   } catch (error) {
     console.error("Error fetching article paths:", error);

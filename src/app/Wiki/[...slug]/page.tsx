@@ -11,14 +11,14 @@ interface ArticlePageProps {
 type ArticleContent = Promise<{ content: string; title: string }>;
 
 async function getArticleContent(slug: string[]): ArticleContent {
-  const articlePath = slug.join("/") + ".md";
+  const articlePath = slug.join("/");
 
   console.log(`Fetching article by path: ${articlePath}`);
   const article = await getArticleByPath(articlePath);
   if (!article) {
     console.log(`Article not found: ${articlePath}`);
     // Check for index.md
-    const indexPath = [...slug, "index"].join("/") + ".md";
+    const indexPath = [...slug, "index"].join("/");
     console.log(`Checking index: ${indexPath}`);
     const indexArticle = await getArticleByPath(indexPath);
     if (!indexArticle) throw new Error("Article not found");
@@ -40,17 +40,18 @@ async function getArticleContent(slug: string[]): ArticleContent {
 // Main ArticlePage component
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
+  const decodedSlug = slug.map((part: string) => decodeURIComponent(part));
 
-  if (slug[slug.length - 1].toLowerCase() === "index") {
-    const parentSlug = slug.slice(0, -1).join("/");
+  if (decodedSlug[decodedSlug.length - 1].toLowerCase() === "index") {
+    const parentSlug = decodedSlug.slice(0, -1).join("/");
     redirect(`/${parentSlug}`);
   }
 
   try {
-    const { content, title } = await getArticleContent(slug);
+    const { content, title } = await getArticleContent(decodedSlug);
     return (
       <div>
-        <Breadcrumbs slug={slug} />
+        <Breadcrumbs slug={decodedSlug} />
         <h1>{title}</h1>
         <div dangerouslySetInnerHTML={{ __html: content }} />
       </div>
@@ -64,6 +65,7 @@ export async function generateStaticParams() {
   console.log("Generating static params");
   const paths = await getAllArticlePaths();
 
+  // TODO : try to return the whote content as static params
   return paths.map((filePath: string) => ({
     slug: filePath.replace(/\.md$/, "").split("/"),
   }));
