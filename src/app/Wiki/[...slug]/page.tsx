@@ -13,13 +13,10 @@ type ArticleContent = Promise<{ content: string; title: string }>;
 async function getArticleContent(slug: string[]): ArticleContent {
   const articlePath = slug.join("/");
 
-  console.log(`Fetching article by path: ${articlePath}`);
   const article = await getArticleByPath(articlePath);
   if (!article) {
-    console.log(`Article not found: ${articlePath}`);
     // Check for index.md
     const indexPath = [...slug, "index"].join("/");
-    console.log(`Checking index: ${indexPath}`);
     const indexArticle = await getArticleByPath(indexPath);
     if (!indexArticle) throw new Error("Article not found");
     return {
@@ -29,7 +26,6 @@ async function getArticleContent(slug: string[]): ArticleContent {
       title: indexArticle.title,
     };
   }
-  console.log(`Article found: ${article.title}`);
 
   return {
     content: (await remark().use(html).process(article.content)).toString(),
@@ -62,7 +58,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 }
 
 export async function generateStaticParams() {
-  console.log("Generating static params");
   const paths = await getAllArticlePaths();
 
   // TODO : try to return the whote content as static params
