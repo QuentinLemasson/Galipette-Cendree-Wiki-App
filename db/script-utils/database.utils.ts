@@ -3,20 +3,7 @@ import path from "path";
 import { extractMetadata, formatArticlePath } from "./markdown.utils.ts";
 import fs from "fs";
 import { Logger } from "./logger.utils.ts";
-
-interface Article {
-  title: string;
-  content: string;
-  path: string;
-  metadata: Record<string, unknown>;
-  folder_id?: number;
-}
-
-interface Folder {
-  id: number;
-  name: string;
-  parent_id: number | null;
-}
+import { Article, Folder } from "../../types/db.types.ts";
 
 /**
  * Ensures the root folder exists in the database and returns its ID.

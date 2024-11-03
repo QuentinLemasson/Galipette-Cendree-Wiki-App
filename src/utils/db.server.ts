@@ -1,5 +1,6 @@
 import { Client } from "pg";
 import dotenv from "dotenv";
+import { Article } from "../../types/db.types.ts";
 
 /*
 This file contains functions that directly interact with the PostgreSQL database using the pg library. 
@@ -8,14 +9,6 @@ These functions are intended to be used only on the server-side, such as during 
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
-
-export interface Article {
-  id: number;
-  title: string;
-  content: string;
-  path: string;
-  metadata: Record<string, unknown>;
-}
 
 /**
  * Get a connected database client

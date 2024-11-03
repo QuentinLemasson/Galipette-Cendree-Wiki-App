@@ -1,10 +1,4 @@
-// Type definitions for better TypeScript support
-export interface Article {
-  title: string;
-  content: string;
-  path: string;
-  metadata: Record<string, unknown>;
-}
+import { Article } from "../../types/db.types.ts";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
