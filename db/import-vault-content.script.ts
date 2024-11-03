@@ -7,6 +7,7 @@ import {
   insertArticles,
   insertRelations,
 } from "./script-utils/database.utils.ts";
+import { Logger } from "./script-utils/logger.utils.ts";
 
 /**
  * Import Vault Content Script
@@ -38,8 +39,11 @@ import {
 dotenv.config({ path: ".env.local" });
 
 const main = async () => {
-  console.log(
-    `🚀 Importing from ${process.env.VAULT_PATH} into ${process.env.DB_DATABASE} on ${process.env.DB_HOST}`
+  const logger = new Logger("import.log.txt");
+
+  logger.info(
+    `Importing from ${process.env.VAULT_PATH} into ${process.env.DB_DATABASE} on ${process.env.DB_HOST}`,
+    "🚀"
   );
 
   // Create a new PostgreSQL client
@@ -53,7 +57,7 @@ const main = async () => {
 
   try {
     await client.connect();
-    console.log("🔗 Connected to PostgreSQL database.");
+    logger.info("Connected to PostgreSQL database.", "🔗");
 
     const articlesDirectory = process.env.VAULT_PATH;
     if (!articlesDirectory) {
@@ -62,41 +66,44 @@ const main = async () => {
 
     // Collect all markdown files from the specified vault directory
     const markdownFiles = collectMarkdownFiles(articlesDirectory);
-    console.log(
-      `📁 Found ${markdownFiles.length} Markdown files. Starting import...`
+    logger.info(
+      `Found ${markdownFiles.length} Markdown files. Starting import...`,
+      "📁"
     );
 
     // Start a transaction
     await client.query("BEGIN");
 
     // Create indexes
-    await createIndexes(client);
+    await createIndexes(client, logger);
 
     // Insert articles
     const articlesMap = await insertArticles(
       client,
       markdownFiles,
-      articlesDirectory
+      articlesDirectory,
+      logger
     );
 
     // Insert relations
-    await insertRelations(client, articlesMap);
+    await insertRelations(client, articlesMap, logger);
 
     // Commit the transaction
     await client.query("COMMIT");
 
-    console.log("✅ Import completed successfully.");
+    logger.success("Import completed successfully.");
   } catch (error) {
-    console.error("❌ Error importing vault:", error);
+    logger.error("Error importing vault:", error as Error);
     try {
       await client.query("ROLLBACK");
-      console.log("🔄 Transaction rolled back due to errors.");
+      logger.info("Transaction rolled back due to errors.", "🔄");
     } catch (rollbackError) {
-      console.error("❌ Error during rollback:", rollbackError);
+      logger.error("Error during rollback:", rollbackError as Error);
     }
   } finally {
     await client.end();
-    console.log("🔌 Disconnected from PostgreSQL database.");
+    logger.info("Disconnected from PostgreSQL database.", "🔌");
+    logger.close();
   }
 };
 

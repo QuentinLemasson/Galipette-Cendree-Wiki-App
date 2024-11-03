@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
+import { Logger } from "./logger.utils.ts";
 
 /**
  * Formats the article path by normalizing separators, removing the root vault path,
@@ -27,7 +28,7 @@ export const formatArticlePath = (
  * @param {string} content - The raw content of the Markdown file.
  * @returns {Object} - An object containing metadata and content.
  */
-export const extractMetadata = (content: string) => {
+export const extractMetadata = (content: string, logger: Logger) => {
   try {
     const matches = content.match(/^---\n([\s\S]*?)\n---/);
 
@@ -46,7 +47,7 @@ export const extractMetadata = (content: string) => {
       }
     }
   } catch (error) {
-    console.warn("Error parsing metadata for content:", error);
+    logger.warn("Error parsing metadata for content:", error as Error);
   }
 
   return {

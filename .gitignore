@@ -46,3 +46,6 @@ next-env.d.ts
 # db context
 db/db.schema.md
 db/reset_schema.sql
+
+# script logs
+db/script-logs/*

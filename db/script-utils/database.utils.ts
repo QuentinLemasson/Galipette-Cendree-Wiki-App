@@ -2,6 +2,7 @@ import type { Client } from "pg";
 import path from "path";
 import { extractMetadata, formatArticlePath } from "./markdown.utils.ts";
 import fs from "fs";
+import { Logger } from "./logger.utils.ts";
 
 interface Article {
   title: string;
@@ -20,9 +21,10 @@ interface Article {
 export const insertArticles = async (
   client: Client,
   markdownFiles: string[],
-  vaultPath: string
+  vaultPath: string,
+  logger: Logger
 ): Promise<Map<string, Article>> => {
-  console.log("📚 Starting to insert articles into the database...");
+  logger.info("Starting to insert articles into the database...", "📚");
 
   const articlesMap = new Map();
   const articlesToInsert = [];
@@ -30,11 +32,11 @@ export const insertArticles = async (
   // Create the map of articles to insert
   for (const filePath of markdownFiles) {
     const fileContent = fs.readFileSync(filePath, "utf8");
-    const { metadata, content } = extractMetadata(fileContent);
+    const { metadata, content } = extractMetadata(fileContent, logger);
     const formattedPath = formatArticlePath(filePath, vaultPath);
     const title = path.basename(filePath, ".md");
 
-    console.log("📄 Inserting article ->", title);
+    logger.info(`Inserting article -> ${title}`, "📄");
 
     articlesMap.set(formattedPath, { title, content, metadata });
     articlesToInsert.push({
@@ -70,9 +72,9 @@ export const insertArticles = async (
 
     try {
       await client.query(queryText, queryValues);
-      console.log(`✅ Inserted ${articlesToInsert.length} articles.`);
+      logger.success(`Inserted ${articlesToInsert.length} articles.`);
     } catch (error) {
-      console.error("❌ Error inserting articles batch:", error);
+      logger.error("❌ Error inserting articles batch:", error as Error);
       throw error;
     }
   }
@@ -87,9 +89,10 @@ export const insertArticles = async (
  */
 export const insertRelations = async (
   client: Client,
-  articlesMap: Map<string, Article>
+  articlesMap: Map<string, Article>,
+  logger: Logger
 ): Promise<void> => {
-  console.log("📚 Starting to insert relations into the database...");
+  logger.info("Starting to insert relations into the database...", "📚");
 
   const relationsToInsert: {
     article_path: string;
@@ -148,16 +151,17 @@ export const insertRelations = async (
     // Add relations to insert to the list
     for (const relatedArticlePath of relatedArticles) {
       if (articlesMap.has(relatedArticlePath)) {
-        console.log(
-          `🔗 Found article relation: ${articlePath} -> ${relatedArticlePath}`
+        logger.info(
+          `Found article relation: ${articlePath} -> ${relatedArticlePath}`,
+          "🔗"
         );
         relationsToInsert.push({
           article_path: articlePath,
           related_article_path: relatedArticlePath,
         });
       } else {
-        console.warn(
-          `⚠️  Related article not found for relation: ${relatedArticlePath} referenced in ${articlePath}`
+        logger.warn(
+          `Related article not found for relation: ${relatedArticlePath} referenced in ${articlePath}`
         );
         // Optionally, handle missing related articles (e.g., create stub articles or log for manual review)
       }
@@ -182,9 +186,9 @@ export const insertRelations = async (
 
     try {
       await client.query(queryText, queryValues);
-      console.log(`✅ Inserted ${relationsToInsert.length} relations.`);
+      logger.success(`Inserted ${relationsToInsert.length} relations.`);
     } catch (error) {
-      console.error("❌ Error inserting relations batch:", error);
+      logger.error("❌ Error inserting relations batch:", error as Error);
     }
   }
 };
@@ -193,7 +197,12 @@ export const insertRelations = async (
  * Creates necessary indexes to optimize performance.
  * @param {Client} client - The PostgreSQL client.
  */
-export const createIndexes = async (client: Client): Promise<void> => {
+export const createIndexes = async (
+  client: Client,
+  logger: Logger
+): Promise<void> => {
+  logger.info("Starting to create indexes...", "🔍");
+
   // Define indexes
   const indexes = [
     {
@@ -223,16 +232,12 @@ export const createIndexes = async (client: Client): Promise<void> => {
     const columns = Array.isArray(column) ? column.join(", ") : column;
 
     try {
-      console.log(
-        "Trying to create index with query : ",
-        `CREATE ${uniqueClause}INDEX IF NOT EXISTS ${indexName} ON ${table} (${columns});`
-      );
       await client.query(
         `CREATE ${uniqueClause}INDEX IF NOT EXISTS ${indexName} ON ${table} (${columns});`
       );
-      console.log(`✅ Index created or already exists: ${indexName}`);
+      logger.success(`Index created or already exists: ${indexName}`);
     } catch (error) {
-      console.error(`❌ Error creating index ${indexName}:`, error);
+      logger.error(`❌ Error creating index ${indexName}:`, error as Error);
       throw error;
     }
   }
