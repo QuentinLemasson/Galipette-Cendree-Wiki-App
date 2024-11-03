@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { remark } from "remark";
 import html from "remark-html";
-import Breadcrumbs from "@/components/Breadcumbs";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getArticleByPath, getAllArticlePaths } from "@/utils/db.server";
 
 interface ArticlePageProps {

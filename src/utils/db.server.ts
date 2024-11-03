@@ -35,7 +35,7 @@ export async function getArticleByPath(path: string): Promise<Article | null> {
   const client = await getDbClient();
   try {
     const result = await client.query<Article>(
-      "SELECT id, title, content, path, metadata FROM articles WHERE path = $1",
+      "SELECT title, content, path, metadata, folder_id FROM articles WHERE path = $1",
       [path]
     );
 

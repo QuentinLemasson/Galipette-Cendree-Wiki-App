@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { getArticleByPath } from "@/utils/db.client";
+import { Article } from "types/db.types";
 
 /*
 This file contains functions that interact with your Express API to fetch data. 
 These functions are intended to be used on the client-side.
 */
-
-interface Article {
-  id: number;
-  title: string;
-  content: string;
-  path: string;
-  metadata: Record<string, unknown>;
-}
 
 const ArticleFetcher: React.FC<{ path: string }> = ({ path }) => {
   const [article, setArticle] = useState<Article | null>(null);
