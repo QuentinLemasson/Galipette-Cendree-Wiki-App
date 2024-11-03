@@ -122,8 +122,12 @@ export const insertRelations = async (
 
         // Check if the link starts with rootFolder
         if (linkText.startsWith(rootFolder)) {
-          // Remove rootFolder from the start of the link
-          const relativePath = linkText.slice(`${rootFolder}/`.length);
+          // Remove rootFolder from the start of the links
+          const relativePath = linkText
+            .slice(`${rootFolder}/`.length) // Remove rootFolder from the start of the link
+            // TODO : Handle display name with | in the link
+            .split("\\|")[0]; // Remove obsidian suffix for display name
+
           // Format the relative path
           return formatArticlePath(relativePath, "");
         } else {
@@ -145,7 +149,7 @@ export const insertRelations = async (
     for (const relatedArticlePath of relatedArticles) {
       if (articlesMap.has(relatedArticlePath)) {
         console.log(
-          `🔗 Found article relation: ${articlePath} ${relatedArticlePath} for article: `
+          `🔗 Found article relation: ${articlePath} -> ${relatedArticlePath}`
         );
         relationsToInsert.push({
           article_path: articlePath,
@@ -153,7 +157,7 @@ export const insertRelations = async (
         });
       } else {
         console.warn(
-          `⚠️ Related article not found for relation: ${relatedArticlePath} referenced in ${articlePath}`
+          `⚠️  Related article not found for relation: ${relatedArticlePath} referenced in ${articlePath}`
         );
         // Optionally, handle missing related articles (e.g., create stub articles or log for manual review)
       }
