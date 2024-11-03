@@ -9,6 +9,111 @@ interface Article {
   content: string;
   path: string;
   metadata: Record<string, unknown>;
+  folder_id?: number;
+}
+
+interface Folder {
+  id: number;
+  name: string;
+  parent_id: number | null;
+}
+
+/**
+ * Ensures the root folder exists in the database and returns its ID.
+ * If the root folder does not exist, it is created.
+ *
+ * @param {Client} client - The PostgreSQL client.
+ * @param {Logger} logger - The logger instance.
+ * @returns {Promise<number>} The ID of the root folder.
+ */
+async function ensureRootFolder(
+  client: Client,
+  logger: Logger
+): Promise<number> {
+  try {
+    // Check if root folder exists
+    const result = await client.query<Folder>(
+      "SELECT id FROM folders WHERE parent_id IS NULL AND name = 'root'"
+    );
+
+    if (result.rows.length > 0) {
+      return result.rows[0].id;
+    }
+
+    // Create root folder if it doesn't exist
+    const insertResult = await client.query<{ id: number }>(
+      "INSERT INTO folders (name, parent_id) VALUES ('root', NULL) RETURNING id"
+    );
+
+    logger.info("Created root folder", "📁");
+    return insertResult.rows[0].id;
+  } catch (error) {
+    logger.error("Error ensuring root folder:", error as Error);
+    throw error;
+  }
+}
+
+/**
+ * Creates or gets the folder hierarchy for a given path
+ * @param client - PostgreSQL client
+ * @param folderPath - Path to the folder (e.g., "folder1/folder2")
+ * @param logger - Logger instance
+ * @returns The ID of the last folder in the path
+ */
+async function getOrCreateFolderHierarchy(
+  client: Client,
+  folderPath: string,
+  logger: Logger
+): Promise<number> {
+  try {
+    // Get root folder ID
+    const rootId = await ensureRootFolder(client, logger);
+
+    // If it's a root-level file
+    if (!folderPath || folderPath === ".") {
+      return rootId;
+    }
+
+    // Split path into folder names
+    const folders = folderPath.split("/").filter(Boolean);
+    let currentParentId = rootId;
+
+    // Process each folder in the path
+    for (const folderName of folders) {
+      // Try to find existing folder under current parent
+      const result = await client.query<Folder>(
+        "SELECT id FROM folders WHERE name = $1 AND parent_id = $2",
+        [folderName, currentParentId]
+      );
+
+      if (result.rows.length > 0) {
+        currentParentId = result.rows[0].id;
+        logger.info(
+          `Found existing folder: ${folderName} (ID: ${currentParentId})`,
+          "📁"
+        );
+      } else {
+        // Create new folder under current parent
+        const insertResult = await client.query<{ id: number }>(
+          "INSERT INTO folders (name, parent_id) VALUES ($1, $2) RETURNING id",
+          [folderName, currentParentId]
+        );
+        currentParentId = insertResult.rows[0].id;
+        logger.info(
+          `Created new folder: ${folderName} (ID: ${currentParentId})`,
+          "📁"
+        );
+      }
+    }
+
+    return currentParentId;
+  } catch (error) {
+    logger.error(
+      `Error processing folder hierarchy for ${folderPath}:`,
+      error as Error
+    );
+    throw error;
+  }
 }
 
 /**
@@ -36,7 +141,18 @@ export const insertArticles = async (
     const formattedPath = formatArticlePath(filePath, vaultPath);
     const title = path.basename(filePath, ".md");
 
-    logger.info(`Inserting article -> ${title}`, "📄");
+    // Get folder path (everything before the last segment)
+    const folderPath = path.dirname(formattedPath);
+    const folderId = await getOrCreateFolderHierarchy(
+      client,
+      folderPath,
+      logger
+    );
+
+    logger.info(
+      `Inserting article -> ${title} (folder: ${folderPath || "root"})`,
+      "📄"
+    );
 
     articlesMap.set(formattedPath, { title, content, metadata });
     articlesToInsert.push({
@@ -44,6 +160,7 @@ export const insertArticles = async (
       content,
       path: formattedPath,
       metadata: JSON.stringify(metadata || {}),
+      folder_id: folderId,
     });
   }
 
@@ -52,22 +169,25 @@ export const insertArticles = async (
     const valuesClause = articlesToInsert
       .map(
         (_, index) =>
-          `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${
-            index * 4 + 4
-          })`
+          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${
+            index * 5 + 4
+          }, $${index * 5 + 5})`
       )
       .join(", ");
 
     const queryText =
-      "INSERT INTO articles (title, content, path, metadata) VALUES " +
+      "INSERT INTO articles (title, content, path, metadata, folder_id) VALUES " +
       valuesClause +
-      " ON CONFLICT (path) DO UPDATE SET title = EXCLUDED.title, content = EXCLUDED.content, metadata = EXCLUDED.metadata";
+      " ON CONFLICT (path) DO UPDATE SET " +
+      "title = EXCLUDED.title, content = EXCLUDED.content, " +
+      "metadata = EXCLUDED.metadata, folder_id = EXCLUDED.folder_id";
 
     const queryValues = articlesToInsert.flatMap(article => [
       article.title,
       article.content,
       article.path,
       article.metadata,
+      article.folder_id,
     ]);
 
     try {
@@ -222,6 +342,18 @@ export const createIndexes = async (
       column: "id",
       indexName: "idx_tags_id",
       unique: true,
+    },
+    {
+      table: "folders",
+      column: "parent_id",
+      indexName: "idx_folders_parent_id",
+      unique: false,
+    },
+    {
+      table: "articles",
+      column: "folder_id",
+      indexName: "idx_articles_folder_id",
+      unique: false,
     },
   ];
 
