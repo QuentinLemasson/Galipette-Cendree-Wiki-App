@@ -48,7 +48,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const { content, title } = await getArticleContent(decodedSlug);
     return (
       <div className="max-w-4xl mx-auto mt-4">
-        <Breadcrumbs slug={["Home", "Wiki", ...decodedSlug]} />
+        <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
         <ArticleContent title={title} content={content} />
       </div>
     );
