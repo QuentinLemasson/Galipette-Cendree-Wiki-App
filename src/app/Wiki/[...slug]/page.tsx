@@ -3,6 +3,7 @@ import { remark } from "remark";
 import html from "remark-html";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getArticleByPath, getAllArticlePaths } from "@/utils/db.server";
+import ArticleContent from "./layout/ArticleContent";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -46,10 +47,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   try {
     const { content, title } = await getArticleContent(decodedSlug);
     return (
-      <div>
-        <Breadcrumbs slug={decodedSlug} />
-        <h1>{title}</h1>
-        <div dangerouslySetInnerHTML={{ __html: content }} />
+      <div className="max-w-4xl mx-auto mt-4">
+        <Breadcrumbs slug={["Home", "Wiki", ...decodedSlug]} />
+        <ArticleContent title={title} content={content} />
       </div>
     );
   } catch {

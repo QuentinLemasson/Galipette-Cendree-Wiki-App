@@ -12,6 +12,9 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      skew: {
+        "30": "30deg",
+      },
     },
   },
   plugins: [],
