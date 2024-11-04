@@ -1,4 +1,5 @@
 import React from "react";
+import ArticleTitle from "./ArticleTitle";
 
 interface ArticleContentProps {
   title: string;
@@ -9,7 +10,7 @@ const ArticleContent = ({ title, content }: ArticleContentProps) => {
   return (
     <div className="w-full mt-8">
       {/* Basic styling */}
-      <h1 className="text-2xl font-bold mb-4 text-gray-300">{title}</h1>
+      <ArticleTitle title={title} />
       {/* Title styling */}
       <div dangerouslySetInnerHTML={{ __html: content }} />
       {/* Render HTML content */}

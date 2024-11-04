@@ -12,11 +12,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
   const decodedSlug = slug.map((part: string) => decodeURIComponent(part));
 
+  // If the last part of the slug is "index", redirect to the parent folder
   if (decodedSlug[decodedSlug.length - 1].toLowerCase() === "index") {
     const parentSlug = decodedSlug.slice(0, -1).join("/");
     redirect(`/${parentSlug}`);
   }
 
+  // Fetch the article from the API
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/articles/path/${decodedSlug.join("/")}`
@@ -32,6 +34,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
     const { title, content } = article;
 
+    // Process the content to HTML
     const processedContent = await remark().use(html).process(content);
 
     return (
