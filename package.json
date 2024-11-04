@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"next dev\"",
-    "build": "next build",
+    "build": "concurrently \"npm run server\" \"next build\"",
     "start": "next start",
     "lint": "next lint",
     "server": "ts-node server/index.js",

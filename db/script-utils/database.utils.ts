@@ -76,8 +76,7 @@ async function getOrCreateFolderHierarchy(
       if (result.rows.length > 0) {
         currentParentId = result.rows[0].id;
         logger.info(
-          `Found existing folder: ${folderName} (ID: ${currentParentId})`,
-          "📁"
+          `Found existing folder: ${folderName} (ID: ${currentParentId})`
         );
       } else {
         // Create new folder under current parent
