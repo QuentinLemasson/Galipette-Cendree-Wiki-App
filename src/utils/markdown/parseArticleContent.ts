@@ -6,12 +6,12 @@ import rehypeSanitize from "rehype-sanitize";
 // import rehypeRewrite from "rehype-rewrite";
 import rehypeReact from "rehype-react";
 // import rehypeStringify from "rehype-stringify";
-import { ArticlePElement } from "@/app/Wiki/[...slug]/layout/ArticlePElement";
+import { ArticlePElement } from "@/app/Wiki/[...slug]/layout/Section-Article-Content/ArticlePElement";
 import React from "react";
 import { jsx, jsxs } from "react/jsx-runtime";
-import { ArticleH2Element } from "@/app/Wiki/[...slug]/layout/ArticleH2Element";
-import { ArticleH3Element } from "@/app/Wiki/[...slug]/layout/ArticleH3Element";
-import { ArticleLinkElement } from "@/app/Wiki/[...slug]/layout/ArticleLinkElement";
+import { ArticleH2Element } from "@/app/Wiki/[...slug]/layout/Section-Article-Content/ArticleH2Element";
+import { ArticleH3Element } from "@/app/Wiki/[...slug]/layout/Section-Article-Content/ArticleH3Element";
+import { ArticleLinkElement } from "@/app/Wiki/[...slug]/layout/Section-Article-Content/ArticleLinkElement";
 
 import { Schema } from "/rehype-sanitize/lib";
 import { remarkWikiLinks } from "./remarkWikiLinks.lib";

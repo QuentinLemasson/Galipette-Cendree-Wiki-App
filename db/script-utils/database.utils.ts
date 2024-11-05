@@ -227,21 +227,19 @@ export const insertRelations = async (
     const relatedArticles = rawRelations
       .map((link: string) => {
         // Extract the link text without brackets
-        const linkText = link.slice(2, -2).trim();
+        const linkTexts = link.slice(2, -2).trim().split("|");
 
-        // Check if the link starts with rootFolder
-        if (linkText.startsWith(rootFolder)) {
+        if (linkTexts.length === 2 && linkTexts[0].startsWith(rootFolder)) {
           // Remove rootFolder from the start of the links
-          const relativePath = linkText
-            .slice(`${rootFolder}/`.length) // Remove rootFolder from the start of the link
-            // TODO : Handle display name with | in the link
-            .split("\\|")[0]; // Remove obsidian suffix for display name
+          const relativePath = linkTexts[0]
+            .slice(`${rootFolder}/`.length)
+            .replace(/\\+$/, ""); // Remove rootFolder from the start of the link
 
           // Format the relative path
           return formatArticlePath(relativePath, "");
         } else {
           // Search for the article by title (replace spaces with underscores)
-          const formattedTitle = linkText.replace(/ /g, "_");
+          const formattedTitle = linkTexts[0].replace(/ /g, "_");
           // Find the corresponding path in articlesMap
           for (const [pathKey, article] of articlesMap.entries()) {
             if (article.title.replace(/ /g, "_") === formattedTitle) {

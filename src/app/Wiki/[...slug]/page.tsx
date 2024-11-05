@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import ArticleContent from "./layout/ArticleContent";
+import ArticleContent from "./layout/Section-Article-Content/ArticleContent";
 import { processArticleContent } from "@/utils/markdown/parseArticleContent";
+import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/RelatedArticlesContainer";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -31,15 +32,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
     const article = await response.json();
 
-    const { title, content } = article;
+    const { title, content, related_articles } = article;
+    console.log(article);
 
     // Process the content to HTML
     const processedContent = await processArticleContent(content);
 
     return (
-      <div className="max-w-4xl mx-auto mt-4">
-        <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
-        <ArticleContent title={title} content={processedContent} />
+      <div className="relative max-w-6xl mx-auto">
+        <div className="flex gap-8">
+          <section className="max-w-4xl mt-4">
+            <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
+            <ArticleContent title={title} content={processedContent} />
+          </section>
+          <RelatedArticlesContainer articleList={related_articles} />
+        </div>
       </div>
     );
   } catch (error) {
