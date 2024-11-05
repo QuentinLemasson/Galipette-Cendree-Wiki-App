@@ -11,12 +11,25 @@ import React from "react";
 import { jsx, jsxs } from "react/jsx-runtime";
 import { ArticleH2Element } from "@/app/Wiki/[...slug]/layout/ArticleH2Element";
 import { ArticleH3Element } from "@/app/Wiki/[...slug]/layout/ArticleH3Element";
+import { ArticleLinkElement } from "@/app/Wiki/[...slug]/layout/ArticleLinkElement";
 
+import { Schema } from "/rehype-sanitize/lib";
+import { remarkWikiLinks } from "./remarkWikiLinks.lib";
+
+// Define sanitization schema
+const sanitizationSchema: Schema = {
+  attributes: {
+    a: ["className", "href", "target", "rel"],
+  },
+};
+
+// Create the unified parser with all the plugins for remark and rehype
 const mardownParser = unified()
   .use(remarkParse)
   .use(remarkGfm)
+  .use(remarkWikiLinks)
   .use(remarkRehype)
-  .use(rehypeSanitize)
+  .use(rehypeSanitize, sanitizationSchema)
   .use(rehypeReact, {
     jsx,
     jsxs,
@@ -26,6 +39,7 @@ const mardownParser = unified()
       p: ArticlePElement,
       h2: ArticleH2Element,
       h3: ArticleH3Element,
+      a: ArticleLinkElement,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any);
