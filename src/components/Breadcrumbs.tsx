@@ -11,7 +11,11 @@ const Breadcrumbs = ({ slug, addHome = false }: BreadcrumbsProps) => {
   const parts = [...(addHome ? ["Home"] : []), ...slug];
 
   return (
-    <nav aria-label="breadcrumb" className="text-gray-700 sticky top-4">
+    // Start of Selection
+    <nav
+      aria-label="breadcrumb"
+      className="text-gray-700 sticky top-0 py-4 backdrop-blur shadow-xl"
+    >
       <ul className="flex list-none p-0 gap-1">
         {parts.map((part, index) => {
           if (addHome && index !== 0) path += `/${part}`;
