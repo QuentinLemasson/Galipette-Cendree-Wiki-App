@@ -36,18 +36,40 @@ app.get("/api/articles/path/*", async (req, res) => {
   console.log(`🔄 Trying to fetch article by path: ${path}...`);
 
   try {
-    const result = await client.query(
-      "SELECT title, content, path, metadata FROM articles WHERE path = $1",
-      [path]
-    );
+    const query = `
+      SELECT 
+        a.title, 
+        a.content, 
+        a.path, 
+        a.metadata,
+        json_agg(
+          json_build_object(
+            'title', related_a.title,
+            'content', related_a.content,
+            'path', related_a.path,
+            'metadata', related_a.metadata
+          )
+        ) AS related_articles
+      FROM articles a
+      LEFT JOIN article_relations ar ON a.path = ar.article_path
+      LEFT JOIN articles related_a ON ar.related_article_path = related_a.path
+      WHERE a.path = $1
+      GROUP BY a.title, a.content, a.path, a.metadata
+    `;
 
-    console.log(`🔍 Found ${result.rows.length} articles for path: ${path}`);
+    const result = await client.query(query, [path]);
+
     if (result.rows.length === 0) {
       res.status(404).json({ error: "Article not found" });
       return;
     }
 
-    res.json(result.rows[0]);
+    const article = result.rows[0];
+    article.related_articles = article.related_articles.filter(
+      ra => ra.path !== null
+    );
+
+    res.json(article);
   } catch (error) {
     console.error("❌ Error fetching article by path:", error.message);
     res
