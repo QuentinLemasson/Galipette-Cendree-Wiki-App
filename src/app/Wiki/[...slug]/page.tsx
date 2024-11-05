@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
-import { remark } from "remark";
-import html from "remark-html";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ArticleContent from "./layout/ArticleContent";
+import { processArticleContent } from "@/utils/markdown/parseArticleContent";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -35,12 +34,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const { title, content } = article;
 
     // Process the content to HTML
-    const processedContent = await remark().use(html).process(content);
+    const processedContent = await processArticleContent(content);
 
     return (
       <div className="max-w-4xl mx-auto mt-4">
         <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
-        <ArticleContent title={title} content={processedContent.toString()} />
+        <ArticleContent title={title} content={processedContent} />
       </div>
     );
   } catch (error) {
