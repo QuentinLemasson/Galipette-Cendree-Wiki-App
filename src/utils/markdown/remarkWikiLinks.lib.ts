@@ -6,12 +6,21 @@ import {
   TextNode,
   WikiLinkNode,
 } from "./remarkWikiLinks.type";
+import { Article } from "types/db.types";
+import { removeRootFolderFromPath } from "../path/pathFormat.lib";
+
+// Add interface for plugin options
+interface RemarkWikiLinksOptions {
+  relatedArticles: Article[];
+}
 
 /**
  * Custom remark plugin for wiki-style links
  * @returns
  */
-export function remarkWikiLinks() {
+export function remarkWikiLinks(options: RemarkWikiLinksOptions) {
+  const { relatedArticles } = options;
+
   return (tree: Node) => {
     visit(
       tree,
@@ -48,18 +57,46 @@ export function remarkWikiLinks() {
             .map((s: string) => s.trim());
           const displayText = display || target;
 
-          // Add the wiki link node
-          children.push({
-            type: "wikiLink",
-            data: {
-              hName: "a",
-              hProperties: {
-                href: `/Wiki/${target.replace(/ /g, "_")}`,
-                className: "wiki-link",
+          const parsedTarget = removeRootFolderFromPath(target);
+          const isPath = relatedArticles.some(
+            article => article.path === parsedTarget
+          );
+          const isName = relatedArticles.some(
+            article => article.title.replace(/ /g, "_") === parsedTarget
+          );
+
+          if (isPath) {
+            // If target is a path, use it directly
+            children.push({
+              type: "wikiLink",
+              data: {
+                hName: "a",
+                hProperties: {
+                  href: `/Wiki/${parsedTarget}`,
+                  className: "wiki-link",
+                },
               },
-            },
-            children: [{ type: "text", value: displayText }],
-          } as WikiLinkNode);
+              children: [{ type: "text", value: displayText }],
+            } as WikiLinkNode);
+          } else if (isName) {
+            // If target is a name, find the corresponding path
+            const foundArticle = relatedArticles.find(
+              article => article.title.replace(/ /g, "_") === target
+            );
+            if (foundArticle) {
+              children.push({
+                type: "wikiLink",
+                data: {
+                  hName: "a",
+                  hProperties: {
+                    href: `/Wiki/${foundArticle.path}`,
+                    className: "wiki-link",
+                  },
+                },
+                children: [{ type: "text", value: displayText }],
+              } as WikiLinkNode);
+            }
+          }
 
           lastIndex = startIndex + fullMatch.length;
         });

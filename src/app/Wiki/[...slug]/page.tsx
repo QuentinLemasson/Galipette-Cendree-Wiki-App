@@ -15,7 +15,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   // If the last part of the slug is "index", redirect to the parent folder
   if (decodedSlug[decodedSlug.length - 1].toLowerCase() === "index") {
     const parentSlug = decodedSlug.slice(0, -1).join("/");
-    redirect(`/${parentSlug}`);
+    redirect(`/Wiki/${parentSlug}`);
   }
 
   // Fetch the article from the API
@@ -31,12 +31,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     }
 
     const article = await response.json();
-
-    const { title, content, related_articles } = article;
-    console.log(article);
+    const { title, content, related_articles = [] } = article;
 
     // Process the content to HTML
-    const processedContent = await processArticleContent(content);
+    const processedContent = await processArticleContent(
+      content,
+      related_articles
+    );
 
     return (
       <div className="relative max-w-6xl mx-auto">
@@ -45,7 +46,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
             <ArticleContent title={title} content={processedContent} />
           </section>
-          <RelatedArticlesContainer articleList={related_articles} />
+          {related_articles?.length > 0 && (
+            <RelatedArticlesContainer articleList={related_articles} />
+          )}
         </div>
       </div>
     );

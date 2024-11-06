@@ -42,18 +42,20 @@ app.get("/api/articles/path/*", async (req, res) => {
         a.content, 
         a.path, 
         a.metadata,
-        json_agg(
-          json_build_object(
-            'title', related_a.title,
-            'content', related_a.content,
-            'path', related_a.path,
-            'metadata', related_a.metadata
-          )
-        ) AS related_articles
+        COALESCE(json_agg(
+          CASE WHEN related_a.path IS NOT NULL THEN
+            json_build_object(
+              'title', related_a.title,
+              'content', related_a.content,
+              'path', related_a.path,
+              'metadata', related_a.metadata
+            )
+          END
+        ) FILTER (WHERE related_a.path IS NOT NULL), '[]'::json) AS related_articles
       FROM articles a
       LEFT JOIN article_relations ar ON a.path = ar.article_path
       LEFT JOIN articles related_a ON ar.related_article_path = related_a.path
-      WHERE a.path = $1
+      WHERE a.path = $1 OR a.path = $1 || '/index'
       GROUP BY a.title, a.content, a.path, a.metadata
     `;
 
@@ -65,10 +67,6 @@ app.get("/api/articles/path/*", async (req, res) => {
     }
 
     const article = result.rows[0];
-    article.related_articles = article.related_articles.filter(
-      ra => ra.path !== null
-    );
-
     res.json(article);
   } catch (error) {
     console.error("❌ Error fetching article by path:", error.message);
