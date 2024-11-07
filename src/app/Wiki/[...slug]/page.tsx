@@ -3,6 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import ArticleContent from "./layout/Section-Article-Content/ArticleContent";
 import { processArticleContent } from "@/utils/markdown/parseArticleContent";
 import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/RelatedArticlesContainer";
+import { Article } from "types/db.types";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -18,7 +19,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     redirect(`/Wiki/${parentSlug}`);
   }
 
-  // Fetch the article from the API
+  // Fetch the article and its related articles from the API
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/articles/path/${decodedSlug.join("/")}`
@@ -31,13 +32,33 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     }
 
     const article = await response.json();
-    const { title, content, related_articles = [] } = article;
+    const {
+      title,
+      content,
+      related_articles = [],
+      mention_articles = [],
+    } = article;
 
-    // Process the content to HTML
+    // Process the article content from markdown to React components
     const processedContent = await processArticleContent(
       content,
       related_articles
     );
+
+    // Fuse related and mention articles into one array and remove duplicates
+    const allRelatedArticles = Array.from(
+      new Set([
+        ...related_articles.map((article: Article) => article.path),
+        ...mention_articles.map((article: Article) => article.path),
+      ])
+    )
+      .map(path => {
+        const relatedArticle = [...related_articles, ...mention_articles].find(
+          article => article.path === path
+        );
+        return relatedArticle ? { ...relatedArticle } : null;
+      })
+      .filter(article => article !== null);
 
     return (
       <div className="relative max-w-6xl mx-auto">
@@ -46,8 +67,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
             <ArticleContent title={title} content={processedContent} />
           </section>
-          {related_articles?.length > 0 && (
-            <RelatedArticlesContainer articleList={related_articles} />
+          {allRelatedArticles?.length > 0 && (
+            <RelatedArticlesContainer articleList={allRelatedArticles} />
           )}
         </div>
       </div>
