@@ -125,7 +125,10 @@ export const insertArticles = async (
     const fileContent = fs.readFileSync(filePath, "utf8");
     const { metadata, content } = extractMetadata(fileContent, logger);
     const formattedPath = formatArticlePath(filePath, vaultPath);
-    const title = path.basename(filePath, ".md");
+    const title =
+      path.basename(filePath, ".md") === "index"
+        ? path.basename(path.dirname(filePath))
+        : path.basename(filePath, ".md");
 
     // Get folder path (everything before the last segment)
     const folderPath = path.dirname(formattedPath);
