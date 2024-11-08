@@ -3,6 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import ArticleContent from "./layout/Section-Article-Content/ArticleContent";
 import { processArticleContent } from "@/utils/markdown/parseArticleContent";
 import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/RelatedArticlesContainer";
+import { RecentArticlesWrapper } from "./layout/Section-Recent-Articles/RecentArticlesWrapper";
 import { Article } from "types/db.types";
 
 interface ArticlePageProps {
@@ -35,6 +36,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const {
       title,
       content,
+      path,
       related_articles = [],
       mention_articles = [],
     } = article;
@@ -67,9 +69,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
             <ArticleContent title={title} content={processedContent} />
           </section>
-          {allRelatedArticles?.length > 0 && (
-            <RelatedArticlesContainer articleList={allRelatedArticles} />
-          )}
+          <div className="mt-24flex flex-col">
+            <RecentArticlesWrapper currentArticle={{ title, path }} />
+            {allRelatedArticles?.length > 0 && (
+              <RelatedArticlesContainer
+                title="Articles liés"
+                articleList={allRelatedArticles}
+              />
+            )}
+          </div>
         </div>
       </div>
     );
