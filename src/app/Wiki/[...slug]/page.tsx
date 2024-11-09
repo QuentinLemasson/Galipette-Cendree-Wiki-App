@@ -5,6 +5,7 @@ import { processArticleContent } from "@/utils/markdown/parseArticleContent";
 import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/RelatedArticlesContainer";
 import { RecentArticlesWrapper } from "./layout/Section-Recent-Articles/RecentArticlesWrapper";
 import { Article } from "types/db.types";
+import { Banner } from "@/components/Banner/Banner";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -63,23 +64,26 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       .filter(article => article !== null);
 
     return (
-      <div className="relative max-w-6xl mx-auto">
-        <div className="flex gap-8">
-          <section className="max-w-4xl mt-4">
-            <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
-            <ArticleContent title={title} content={processedContent} />
-          </section>
-          <div className="mt-24flex flex-col">
-            <RecentArticlesWrapper currentArticle={{ title, path }} />
-            {allRelatedArticles?.length > 0 && (
-              <RelatedArticlesContainer
-                title="Articles liés"
-                articleList={allRelatedArticles}
-              />
-            )}
+      <>
+        <Banner />
+        <div className="relative max-w-6xl mx-auto pt-20">
+          <div className="flex gap-8">
+            <section className="max-w-4xl mt-4">
+              <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
+              <ArticleContent title={title} content={processedContent} />
+            </section>
+            <aside className="fixed right-16 top-24 flex flex-col">
+              <RecentArticlesWrapper currentArticle={{ title, path }} />
+              {allRelatedArticles?.length > 0 && (
+                <RelatedArticlesContainer
+                  title="Articles liés"
+                  articleList={allRelatedArticles}
+                />
+              )}
+            </aside>
           </div>
         </div>
-      </div>
+      </>
     );
   } catch (error) {
     console.error("Error fetching article:", error);
