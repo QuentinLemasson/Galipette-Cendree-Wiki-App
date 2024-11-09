@@ -15,6 +15,10 @@ const config: Config = {
       skew: {
         "30": "30deg",
       },
+      gridTemplateColumns: {
+        // Complex site-specific column configuration
+        banner: "1fr 50% 1fr",
+      },
     },
   },
   plugins: [],

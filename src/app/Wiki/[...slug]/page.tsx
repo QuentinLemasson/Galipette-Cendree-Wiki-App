@@ -66,13 +66,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     return (
       <>
         <Banner />
-        <div className="relative max-w-6xl mx-auto pt-20">
+        <div className="relative max-w-4xl mx-auto pt-12">
           <div className="flex gap-8">
-            <section className="max-w-4xl mt-4">
+            <section className="w-full">
               <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
               <ArticleContent title={title} content={processedContent} />
             </section>
-            <aside className="fixed right-16 top-24 flex flex-col">
+            <aside className="fixed right-16 top-28 flex flex-col">
               <RecentArticlesWrapper currentArticle={{ title, path }} />
               {allRelatedArticles?.length > 0 && (
                 <RelatedArticlesContainer

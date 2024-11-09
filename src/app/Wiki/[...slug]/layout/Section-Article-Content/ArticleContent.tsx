@@ -8,7 +8,7 @@ interface ArticleContentProps {
 
 const ArticleContent = ({ title, content }: ArticleContentProps) => {
   return (
-    <div className="w-full mt-8 flex flex-col gap-4 items-start mb-32">
+    <div className="w-full mt-4 flex flex-col gap-4 items-start mb-32">
       {/* Basic styling */}
       <ArticleTitle title={title} />
       {/* Title styling */}
