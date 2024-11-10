@@ -4,6 +4,8 @@ export interface Article {
   path: string;
   metadata: Record<string, unknown>;
   folder_id?: number;
+  related_articles: Article[];
+  mention_articles: Article[];
 }
 
 export interface Folder {

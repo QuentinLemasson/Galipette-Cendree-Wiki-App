@@ -6,6 +6,7 @@ import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/Rela
 import { RecentArticlesWrapper } from "./layout/Section-Recent-Articles/RecentArticlesWrapper";
 import { Article } from "types/db.types";
 import { Banner } from "@/components/Banner/Banner";
+import { getArticleByPath, getArticlePaths } from "@/data/articles";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -23,17 +24,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   // Fetch the article and its related articles from the API
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/articles/path/${decodedSlug.join("/")}`
-    );
-    if (!response.ok) {
-      if (response.status === 404) {
-        return <div>404 - Article not found</div>;
-      }
-      throw new Error("Failed to fetch article");
+    const article = await getArticleByPath(decodedSlug.join("/"));
+
+    if (!article) {
+      return <div>404 - Article not found</div>;
     }
 
-    const article = await response.json();
     const {
       title,
       content,
@@ -97,15 +93,7 @@ export async function generateStaticParams() {
   console.log("----------------------------------------");
 
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/articlepaths`
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch article paths");
-    }
-    const articles: { path: string }[] = await response.json();
-
+    const articles = await getArticlePaths();
     return articles.map(article => ({
       slug: article.path.replace(/\.md$/, "").split("/"),
     }));

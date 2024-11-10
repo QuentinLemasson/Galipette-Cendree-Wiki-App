@@ -11,11 +11,11 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: ".env.local" });
 
 const client = new Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  user: process.env.LOCAL_DB_USER,
+  password: process.env.LOCAL_DB_PASSWORD,
+  host: process.env.LOCAL_DB_HOST,
+  database: process.env.LOCAL_DB_DATABASE,
+  port: parseInt(process.env.LOCAL_DB_PORT || "5432"),
 });
 
 const markdownLines = [];

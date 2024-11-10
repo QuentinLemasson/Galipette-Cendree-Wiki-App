@@ -4,11 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"next dev\"",
-    "build": "concurrently \"npm run server\" \"next build\"",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "server": "ts-node server/index.js",
     "import-vault": "node --loader ts-node/esm db/import-vault-content.script.ts"
   },
   "dependencies": {
