@@ -15,7 +15,7 @@ interface CacheEntry {
   timestamp: number;
 }
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 1 days
 const CACHE_KEY = "search-cache";
 
 // Helper functions for cache management
