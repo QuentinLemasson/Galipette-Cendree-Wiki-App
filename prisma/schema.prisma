@@ -1,12 +1,12 @@
-// This is your Prisma schema file
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("LOCAL_DB_URL")
-  directUrl = env("LOCAL_DB_URL_DIRECT")
+  url      = env("DB_URL")
+  directUrl = env("DB_URL")
   relationMode = "prisma"
 }
 
