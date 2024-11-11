@@ -1,0 +1,77 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LOCAL_DB_URL")
+  directUrl = env("LOCAL_DB_URL_DIRECT")
+  relationMode = "prisma"
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  path      String   @unique
+  metadata  Json     @default("{}")
+  folderId  Int?     @map("folder_id")
+  folder    Folder?  @relation(fields: [folderId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  relatedToArticles   ArticleRelation[] @relation("ArticleToRelated")
+  relatedFromArticles ArticleRelation[] @relation("RelatedToArticle")
+  tags               ArticleTag[]
+
+  @@map("articles")
+  @@index([path, title])
+  @@index([folderId])
+}
+
+model ArticleRelation {
+  id                  Int      @id @default(autoincrement())
+  articlePath         String   @map("article_path")
+  relatedArticlePath  String   @map("related_article_path")
+  
+  article             Article  @relation("ArticleToRelated", fields: [articlePath], references: [path], onDelete: Cascade)
+  relatedArticle      Article  @relation("RelatedToArticle", fields: [relatedArticlePath], references: [path], onDelete: Cascade)
+
+  @@unique([articlePath, relatedArticlePath])
+  @@index([articlePath])
+  @@index([relatedArticlePath])
+  @@map("article_relations")
+}
+
+model Tag {
+  id           Int          @id @default(autoincrement())
+  name         String       @unique
+  articles     ArticleTag[]
+
+  @@map("tags")
+}
+
+model ArticleTag {
+  articlePath  String   @map("article_path")
+  tagId       Int      @map("tag_id")
+  article     Article  @relation(fields: [articlePath], references: [path], onDelete: Cascade)
+  tag         Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articlePath, tagId])
+  @@index([tagId])
+  @@map("article_tags")
+}
+
+model Folder {
+  id        Int      @id @default(autoincrement())
+  name      String
+  parentId  Int?     @map("parent_id")
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  children  Folder[] @relation("FolderToFolder")
+  articles  Article[]
+
+  @@map("folders")
+  @@index([parentId])
+} 
