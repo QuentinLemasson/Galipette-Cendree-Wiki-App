@@ -8,7 +8,7 @@ export default function HomePage() {
     <div className="cursor-sparkle">
       <SparklesCursor />
       <Banner />
-      <main className="max-w-4xl mx-auto pt-16 px-4 mb-16">
+      <main className="max-w-5xl mx-auto pt-16 px-8 mb-16">
         <div className="space-y-12">
           {/* Hero Section */}
           <section className="text-center space-y-4 flex flex-col items-center">
@@ -17,8 +17,8 @@ export default function HomePage() {
               Cendrée - Wiki
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Une application wiki pour mon jeu de rôle sur table, construite
-              dynamiquement à partir d&apos;une vault{" "}
+              Une application générant wiki pour mon jeu de rôle sur table,
+              construite dynamiquement à partir d&apos;une vault{" "}
               <Link
                 href="https://www.obsidian.md/"
                 target="_blank"
@@ -61,7 +61,7 @@ export default function HomePage() {
               />
               <FeatureCard
                 title="Liens wiki"
-                description="Créer des liens entre les articles en utilisant la syntaxe[[wiki-links]]"
+                description="Créer des liens entre les articles en utilisant la syntaxe Obsidian : [[wiki-links]]"
               />
               <FeatureCard
                 title="Tag & Metadata"
@@ -123,7 +123,9 @@ function FeatureCard({
   return (
     <div className="p-4 border border-gray-200 dark:border-gray-800 rounded-lg">
       <h3 className="font-bold mb-2">{title}</h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+        {description}
+      </p>
     </div>
   );
 }

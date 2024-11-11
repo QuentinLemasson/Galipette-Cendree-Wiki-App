@@ -12,6 +12,7 @@ import {
   getFolderTree,
 } from "@/data/articles";
 import { FolderTree } from "./layout/Section-Navigation/FolderTree";
+import { VersionTag } from "@/components/VersionTag/VersionTag";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -90,6 +91,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </aside>
           </div>
         </div>
+        <VersionTag />
       </>
     );
   } catch (error) {
