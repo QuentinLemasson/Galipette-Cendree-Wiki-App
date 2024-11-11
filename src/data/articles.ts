@@ -1,6 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { Article } from "types/db.types";
 
+/**
+ * Retrieves all article paths from the database in alphabetical order
+ * @returns Promise containing an array of objects with article paths
+ * @throws {Error} If there is an error fetching the paths from the database
+ */
 export async function getArticlePaths(): Promise<{ path: string }[]> {
   try {
     const articles = await prisma.article.findMany({
@@ -18,6 +23,12 @@ export async function getArticlePaths(): Promise<{ path: string }[]> {
   }
 }
 
+/**
+ * Retrieves an article by its path, including related articles
+ * @param path - The path of the article to retrieve
+ * @returns Promise containing the article with related articles or null if not found
+ * @throws {Error} If there is an error fetching the article from the database
+ */
 export async function getArticleByPath(path: string): Promise<Article | null> {
   try {
     const article = await prisma.article.findUnique({
@@ -72,6 +83,12 @@ export async function getArticleByPath(path: string): Promise<Article | null> {
   }
 }
 
+/**
+ * Searches for articles containing the given query in title or content
+ * @param query - The search query string
+ * @returns Promise containing an array of matching articles
+ * @throws {Error} If there is an error searching articles in the database
+ */
 export async function searchArticles(query: string): Promise<Article[]> {
   try {
     const articles = await prisma.article.findMany({
@@ -97,6 +114,12 @@ export async function searchArticles(query: string): Promise<Article[]> {
   }
 }
 
+/**
+ * Finds articles that share tags with the specified article
+ * @param articlePath - The path of the article to find related articles for
+ * @returns Promise containing an array of related articles
+ * @throws {Error} If there is an error fetching related articles from the database
+ */
 export async function getRelatedArticlesByTags(
   articlePath: string
 ): Promise<Article[]> {
@@ -143,6 +166,12 @@ export async function getRelatedArticlesByTags(
     throw error;
   }
 }
+
+/**
+ * Retrieves the folder structure with articles
+ * @returns Promise containing an array of folders with their articles
+ * @throws {Error} If there is an error fetching the folder tree from the database
+ */
 export async function getFolderTree() {
   try {
     const folders = await prisma.folder.findMany({
