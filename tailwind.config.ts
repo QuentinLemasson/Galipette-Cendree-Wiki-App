@@ -21,8 +21,11 @@ const config: Config = {
         // Complex site-specific column configuration
         banner: "1fr 50% 1fr",
       },
+      animation: {
+        sparkle: "sparkle 1s ease-out forwards",
+      },
     },
   },
-  plugins: [addIconSelectors(["mdi"])],
+  plugins: [addIconSelectors(["mdi", "logos", "vscode-icons"])],
 };
 export default config;

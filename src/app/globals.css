@@ -5,12 +5,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-thumb-hover: #a1a1a1;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --scrollbar-track: #1a1a1a;
+    --scrollbar-thumb: #333333;
+    --scrollbar-thumb-hover: #444444;
   }
 }
 
@@ -18,4 +24,72 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+}
+
+/* Custom cursor styles */
+.cursor-sparkle,
+.cursor-sparkle * {
+  cursor: none;
+}
+
+.cursor-sparkle .custom-cursor {
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+@keyframes sparkle {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle 1s ease-out forwards;
+}
+
+/* Modern Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Firefox scrollbar styles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Hide scrollbar when not scrolling */
+::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+body:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
 }
