@@ -1,8 +1,8 @@
-import { SearchResult } from "../../types/search";
+import { Article } from "types/db.types";
 
 class CacheEntry {
   constructor(
-    public data: SearchResult[],
+    public data: Article[],
     public timestamp: number = Date.now(),
     public ttl: number = 5 * 60 * 1000 // 5 minutes
   ) {}
@@ -30,7 +30,7 @@ export class SearchCache {
     return entry;
   }
 
-  set(key: string, value: SearchResult[]): void {
+  set(key: string, value: Article[]): void {
     if (this.cache.size >= this.maxSize) {
       const oldestKey = this.cache.keys().next().value;
       if (oldestKey) {

@@ -2,12 +2,7 @@ import React, { useEffect, useRef } from "react";
 import SearchResultItem from "./SearchResultItem";
 import LoadingSpinner from "../common/LoadingSpinner";
 import ErrorMessage from "../common/ErrorMessage";
-
-interface Article {
-  path: string;
-  title: string;
-  tags?: { name: string }[];
-}
+import { Article } from "types/db.types";
 
 interface SearchResultsProps {
   results: Article[];

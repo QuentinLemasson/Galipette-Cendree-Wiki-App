@@ -1,19 +1,15 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
+import { useState, useRef } from "react";
 import { SearchCache } from "@/utils/search/cache";
-import { useDebounce, SEARCH_CONFIG } from "@/utils/search/config";
-
-interface SearchResult {
-  title: string;
-  path: string;
-  content: string;
-  tags: { tag: { name: string } }[];
-}
+import { SEARCH_CONFIG } from "@/utils/search/config";
+import { useClickOutside } from "@/utils/hooks/useClickOutside";
+import { useDebounce } from "@/utils/hooks/useDebounce";
+import SearchResults from "./SearchResults";
+import { Article } from "types/db.types";
 
 interface SearchState {
-  results: SearchResult[];
+  results: Article[];
   loading: boolean;
   error: string | null;
 }
@@ -27,14 +23,12 @@ export const SearchBar = () => {
     loading: false,
     error: null,
   });
+  const [hasMore] = useState(false);
 
   // Initialize utilities
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchCache = useRef(new SearchCache());
-
-  // Use debounced search query
-  const debouncedQuery = useDebounce(searchQuery, SEARCH_CONFIG.debounceMs);
 
   // Combined search function
   const searchArticles = async (query: string) => {
@@ -52,7 +46,7 @@ export const SearchBar = () => {
     const cachedResult = searchCache.current.get(normalizedQuery);
     if (cachedResult?.isValid()) {
       setSearchState({
-        results: cachedResult.data,
+        results: cachedResult.data as Article[],
         loading: false,
         error: null,
       });
@@ -87,33 +81,21 @@ export const SearchBar = () => {
     }
   };
 
-  // Watch for changes in debounced query
-  useEffect(() => {
-    if (debouncedQuery) {
-      searchArticles(debouncedQuery);
-    }
-  }, [debouncedQuery]);
+  // Use debounced search query
+  useDebounce(searchQuery, SEARCH_CONFIG.debounceMs, searchArticles);
 
-  // Click outside handler
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        !inputRef.current?.contains(event.target as Node)
-      ) {
-        setIsDropdownVisible(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useClickOutside([dropdownRef, inputRef], () => {
+    setIsDropdownVisible(false);
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
     setIsDropdownVisible(true);
+  };
+
+  const handleLoadMore = () => {
+    console.log("Loading more results...");
   };
 
   return (
@@ -131,41 +113,18 @@ export const SearchBar = () => {
         🔍
       </span>
 
-      {/* Dropdown Results */}
-      {isDropdownVisible && searchState.results.length > 0 && (
+      {isDropdownVisible && (
         <div
           ref={dropdownRef}
           className="absolute top-full left-0 right-0 mt-1 bg-zinc-800 border border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50"
         >
-          {searchState.results.map(article => (
-            <Link
-              key={article.path}
-              href={`/Wiki/${article.path}`}
-              onClick={() => {
-                setIsDropdownVisible(false);
-                setSearchQuery("");
-              }}
-            >
-              <div className="p-3 hover:bg-zinc-700 cursor-pointer border-b border-gray-700 last:border-0">
-                <div className="font-medium text-gray-200">{article.title}</div>
-                <div className="text-sm text-gray-400 mt-1 line-clamp-2">
-                  {article.content}
-                </div>
-                {article.tags.length > 0 && (
-                  <div className="flex gap-2 mt-1">
-                    {article.tags.map(({ tag }) => (
-                      <span
-                        key={tag.name}
-                        className="text-xs px-2 py-0.5 bg-zinc-700 rounded-full text-gray-300"
-                      >
-                        {tag.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Link>
-          ))}
+          <SearchResults
+            results={searchState.results as Article[]}
+            loading={searchState.loading}
+            error={searchState.error}
+            onLoadMore={handleLoadMore}
+            hasMore={hasMore}
+          />
         </div>
       )}
     </div>
