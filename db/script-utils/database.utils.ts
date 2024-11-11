@@ -170,18 +170,13 @@ export async function insertRelations(
 ) {
   logger.info("Starting to insert relations into the database...", "📚");
 
-  const vaultPathParts = path
-    .normalize(process.env.VAULT_PATH ?? "")
-    .split(path.sep);
-  const rootFolder = vaultPathParts[vaultPathParts.length - 1]
-    .replace(
-      /\\/g,
-      "\\\\" // Escape backslashes for regex
-    )
-    .replace(
-      /\//g,
-      "\\/" // Escape slashes for regex
-    );
+  const rootFolder = process.env.WIKI_DIRECTORY?.replace(
+    /\\/g,
+    "\\\\" // Escape backslashes for regex
+  ).replace(
+    /\//g,
+    "\\/" // Escape slashes for regex
+  );
 
   for (const [articlePath, article] of articlesMap.entries()) {
     const rawRelations = article.content.match(/\[\[([^\]]+)\]\]/g) || [];
@@ -190,7 +185,7 @@ export async function insertRelations(
       const linkTexts = link.slice(2, -2).trim().split("|");
       let relatedPath;
 
-      if (linkTexts[0].startsWith(rootFolder)) {
+      if (rootFolder && linkTexts[0].startsWith(rootFolder)) {
         const relativePath = linkTexts[0]
           .slice(`${rootFolder}/`.length)
           .replace(/\\+$/, "");

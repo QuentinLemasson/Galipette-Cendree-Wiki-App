@@ -27,10 +27,13 @@ const prisma = new PrismaClient({
 const main = async () => {
   const logger = new Logger("import.log.txt");
 
-  logger.info(`Importing from ${process.env.VAULT_PATH} into database`, "🚀");
+  logger.info(
+    `Importing from ${process.env.VAULT_PATH}\\${process.env.WIKI_DIRECTORY} into database`,
+    "🚀"
+  );
 
   try {
-    const articlesDirectory = process.env.VAULT_PATH;
+    const articlesDirectory = `${process.env.VAULT_PATH}\\${process.env.WIKI_DIRECTORY}`;
     if (!articlesDirectory) {
       throw new Error("VAULT_PATH environment variable is not set");
     }
