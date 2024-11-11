@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { SearchCache } from "@/utils/search/cache";
+import { useDebounce, SEARCH_CONFIG } from "@/utils/search/config";
 
 interface SearchResult {
   title: string;
@@ -10,48 +12,89 @@ interface SearchResult {
   tags: { tag: { name: string } }[];
 }
 
-interface CacheEntry {
+interface SearchState {
   results: SearchResult[];
-  timestamp: number;
+  loading: boolean;
+  error: string | null;
 }
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 1 days
-const CACHE_KEY = "search-cache";
-
-// Helper functions for cache management
-const loadCacheFromStorage = (): Map<string, CacheEntry> => {
-  if (typeof window === "undefined") return new Map();
-
-  try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (!cached) return new Map();
-
-    const entries = JSON.parse(cached);
-    return new Map(Object.entries(entries));
-  } catch (error) {
-    console.error("Error loading cache:", error);
-    return new Map();
-  }
-};
-
-const saveCacheToStorage = (cache: Map<string, CacheEntry>) => {
-  try {
-    const entries = Object.fromEntries(cache.entries());
-    localStorage.setItem(CACHE_KEY, JSON.stringify(entries));
-  } catch (error) {
-    console.error("Error saving cache:", error);
-  }
-};
-
 export const SearchBar = () => {
+  // State management
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [searchState, setSearchState] = useState<SearchState>({
+    results: [],
+    loading: false,
+    error: null,
+  });
+
+  // Initialize utilities
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchCache = useRef(new SearchCache());
 
-  const searchCache = useMemo(() => loadCacheFromStorage(), []);
+  // Use debounced search query
+  const debouncedQuery = useDebounce(searchQuery, SEARCH_CONFIG.debounceMs);
 
+  // Combined search function
+  const searchArticles = async (query: string) => {
+    const normalizedQuery = query.toLowerCase().trim();
+
+    // Reset state if query is too short
+    if (normalizedQuery.length < SEARCH_CONFIG.minChars) {
+      setSearchState({ results: [], loading: false, error: null });
+      return;
+    }
+
+    setSearchState(prev => ({ ...prev, loading: true }));
+
+    // Check cache
+    const cachedResult = searchCache.current.get(normalizedQuery);
+    if (cachedResult?.isValid()) {
+      setSearchState({
+        results: cachedResult.data,
+        loading: false,
+        error: null,
+      });
+      return;
+    }
+
+    // API call if needed
+    try {
+      const response = await fetch(
+        `/api/search?q=${encodeURIComponent(normalizedQuery)}`
+      );
+      const data = await response.json();
+
+      // Cache update
+      searchCache.current.set(normalizedQuery, data.articles);
+
+      // State update
+      setSearchState({
+        results: data.articles,
+        loading: false,
+        error: null,
+      });
+    } catch (err: unknown) {
+      // Error handling
+      const errorMessage =
+        err instanceof Error ? err.message : "Search failed. Please try again.";
+      setSearchState(prev => ({
+        ...prev,
+        loading: false,
+        error: errorMessage,
+      }));
+    }
+  };
+
+  // Watch for changes in debounced query
+  useEffect(() => {
+    if (debouncedQuery) {
+      searchArticles(debouncedQuery);
+    }
+  }, [debouncedQuery]);
+
+  // Click outside handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -66,75 +109,6 @@ export const SearchBar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const searchArticles = async (query: string) => {
-    if (query.trim().length < 2) {
-      setResults([]);
-      return;
-    }
-
-    const normalizedQuery = query.toLowerCase().trim();
-    const cachedResult = searchCache.get(normalizedQuery);
-    const now = Date.now();
-
-    // Check cache and validate timestamp
-    if (cachedResult && now - cachedResult.timestamp < CACHE_DURATION) {
-      setResults(cachedResult.results);
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `/api/search?q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
-
-      // Update cache and persist
-      searchCache.set(normalizedQuery, {
-        results: data.articles,
-        timestamp: now,
-      });
-      saveCacheToStorage(searchCache);
-
-      setResults(data.articles);
-    } catch (error) {
-      console.error("Search error:", error);
-    }
-  };
-
-  // Clean up expired cache entries periodically
-  useEffect(() => {
-    const cleanupCache = () => {
-      const now = Date.now();
-      let hasChanges = false;
-
-      searchCache.forEach((entry, key) => {
-        if (now - entry.timestamp > CACHE_DURATION) {
-          searchCache.delete(key);
-          hasChanges = true;
-        }
-      });
-
-      if (hasChanges) {
-        saveCacheToStorage(searchCache);
-      }
-    };
-
-    // Run cleanup every minute
-    const interval = setInterval(cleanupCache, 60000);
-    return () => clearInterval(interval);
-  }, [searchCache]);
-
-  // Debounce search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchQuery) {
-        searchArticles(searchQuery);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -158,12 +132,12 @@ export const SearchBar = () => {
       </span>
 
       {/* Dropdown Results */}
-      {isDropdownVisible && results.length > 0 && (
+      {isDropdownVisible && searchState.results.length > 0 && (
         <div
           ref={dropdownRef}
           className="absolute top-full left-0 right-0 mt-1 bg-zinc-800 border border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50"
         >
-          {results.map(article => (
+          {searchState.results.map(article => (
             <Link
               key={article.path}
               href={`/Wiki/${article.path}`}
