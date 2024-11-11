@@ -13,7 +13,8 @@ export default function HomePage() {
           {/* Hero Section */}
           <section className="text-center space-y-4 flex flex-col items-center">
             <h1 className="text-4xl font-bold text-indigo-500 flex items-center justify-center gap-2">
-              <span className="iconify mdi--home" /> La Galipette Cendrée - Wiki
+              <span className="iconify fa-solid--dice-d20" /> La Galipette
+              Cendrée - Wiki
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
               Une application wiki pour mon jeu de rôle sur table, construite
@@ -99,7 +100,7 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span className="iconify mdi--github text-x pointer-events-none" />
+                <span className="iconify mdi--github text-xl pointer-events-none" />
                 Le repo GitHub public
                 <span className="iconify mdi--arrow-right text-xl group-hover:translate-x-1 transition-transform pointer-events-none" />
               </Link>

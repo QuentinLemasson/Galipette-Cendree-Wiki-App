@@ -26,6 +26,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [addIconSelectors(["mdi", "logos", "vscode-icons"])],
+  plugins: [addIconSelectors(["mdi", "logos", "vscode-icons", "fa-solid"])],
 };
 export default config;

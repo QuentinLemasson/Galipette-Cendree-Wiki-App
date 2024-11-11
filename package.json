@@ -12,6 +12,7 @@
     "import-vault": "node --loader ts-node/esm db/import-vault-content.script.ts"
   },
   "dependencies": {
+    "@iconify-json/fa-solid": "^1.2.0",
     "@iconify-json/logos": "^1.2.3",
     "@iconify-json/mdi": "^1.2.1",
     "@iconify-json/vscode-icons": "^1.2.2",
