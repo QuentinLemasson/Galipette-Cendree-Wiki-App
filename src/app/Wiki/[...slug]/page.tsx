@@ -6,7 +6,12 @@ import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/Rela
 import { RecentArticlesWrapper } from "./layout/Section-Recent-Articles/RecentArticlesWrapper";
 import { Article } from "types/db.types";
 import { Banner } from "@/components/Banner/Banner";
-import { getArticleByPath, getArticlePaths } from "@/data/articles";
+import {
+  getArticleByPath,
+  getArticlePaths,
+  getFolderTree,
+} from "@/data/articles";
+import { FolderTree } from "./layout/Section-Navigation/FolderTree";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
@@ -15,6 +20,9 @@ interface ArticlePageProps {
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
   const decodedSlug = slug.map((part: string) => decodeURIComponent(part));
+
+  // Fetch folder tree data
+  const folderTree = await getFolderTree();
 
   // If the last part of the slug is "index", redirect to the parent folder
   if (decodedSlug[decodedSlug.length - 1].toLowerCase() === "index") {
@@ -64,6 +72,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <Banner />
         <div className="relative max-w-4xl mx-auto pt-12">
           <div className="flex gap-8">
+            <aside className="fixed left-4 top-28">
+              <FolderTree initialData={folderTree} />
+            </aside>
             <section className="w-full">
               <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
               <ArticleContent title={title} content={processedContent} />

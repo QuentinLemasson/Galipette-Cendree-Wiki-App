@@ -143,3 +143,29 @@ export async function getRelatedArticlesByTags(
     throw error;
   }
 }
+export async function getFolderTree() {
+  try {
+    const folders = await prisma.folder.findMany({
+      where: {
+        parentId: {
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        parentId: true,
+        articles: {
+          select: {
+            title: true,
+            path: true,
+          },
+        },
+      },
+    });
+    return folders;
+  } catch (error) {
+    console.error("Error fetching folder tree:", error);
+    throw error;
+  }
+}
