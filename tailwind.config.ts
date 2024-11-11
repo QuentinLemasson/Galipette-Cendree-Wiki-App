@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 
+import { addIconSelectors } from "@iconify/tailwind";
+
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -19,8 +21,11 @@ const config: Config = {
         // Complex site-specific column configuration
         banner: "1fr 50% 1fr",
       },
+      animation: {
+        sparkle: "sparkle 1s ease-out forwards",
+      },
     },
   },
-  plugins: [],
+  plugins: [addIconSelectors(["mdi", "logos", "vscode-icons", "fa-solid"])],
 };
 export default config;
