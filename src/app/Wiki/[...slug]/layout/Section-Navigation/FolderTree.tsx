@@ -20,7 +20,17 @@ interface FolderTreeProps {
   initialData: FolderNode[];
 }
 
-const FolderTreeItem = ({
+const ArticleItem = ({ article }: { article: ArticleTreeItem }) => (
+  <Link
+    href={`/Wiki/${article.path}`}
+    className="group hover:text-indigo-500 text-sm flex items-center gap-4 hover:gap-3.5"
+  >
+    <div className="w-0.5 group-hover:w-1 h-6 bg-indigo-900 group-hover:bg-indigo-500 opacity-70 group-hover:opacity-90 transition-all duration-100" />
+    <span>{article.title}</span>
+  </Link>
+);
+
+const FolderItem = ({
   node,
   level = 0,
 }: {
@@ -42,24 +52,22 @@ const FolderTreeItem = ({
       </div>
 
       {isOpen && (
-        <div className="ml-4">
+        <div className="">
           {node.children?.map(child => (
-            <FolderTreeItem key={child.id} node={child} level={level + 1} />
+            <FolderItem key={child.id} node={child} level={level + 1} />
           ))}
           {node.articles.map(article => (
-            <Link
-              key={article.path}
-              href={`/Wiki/${article.path}`}
-              className="block py-1 hover:text-indigo-500 text-sm"
-            >
-              {article.title}
-            </Link>
+            <ArticleItem key={article.path} article={article} />
           ))}
         </div>
       )}
     </div>
   );
 };
+
+const RootFolderItem = ({ node }: { node: FolderNode }) => (
+  <FolderItem node={node} level={0} />
+);
 
 export const FolderTree = ({ initialData }: FolderTreeProps) => {
   const [treeData, setTreeData] = useState<FolderNode[]>([]);
@@ -105,9 +113,9 @@ export const FolderTree = ({ initialData }: FolderTreeProps) => {
   }, [initialData]);
 
   return (
-    <nav className="w-64 bg-transparent shadow-lg rounded-lg p-4">
+    <nav className="w-64 bg-neutral-900 shadow-lg rounded-lg p-4 flex flex-col gap-3">
       {treeData.map(node => (
-        <FolderTreeItem key={node.id} node={node} />
+        <RootFolderItem key={node.id} node={node} />
       ))}
     </nav>
   );
