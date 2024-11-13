@@ -126,7 +126,7 @@ export async function insertArticles(
     );
 
     logger.info(
-      `Processing article -> ${title} (folder: ${folderPath || "root"})`,
+      `Processing article -> ${title} with path: ${formattedPath} (folder: ${folderPath || "root"})`,
       "📄"
     );
 

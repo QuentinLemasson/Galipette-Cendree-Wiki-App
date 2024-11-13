@@ -31,9 +31,14 @@ export async function getArticlePaths(): Promise<{ path: string }[]> {
  */
 export async function getArticleByPath(path: string): Promise<Article | null> {
   try {
-    const article = await prisma.article.findUnique({
+    const article = await prisma.article.findFirst({
       where: {
-        path: path,
+        OR: [
+          {
+            path: path,
+          },
+          { path: `${path}/${process.env.INDEX_IDENTIFIER}` },
+        ],
       },
       include: {
         relatedToArticles: {
