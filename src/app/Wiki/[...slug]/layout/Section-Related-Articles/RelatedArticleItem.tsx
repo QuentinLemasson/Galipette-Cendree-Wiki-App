@@ -19,9 +19,7 @@ export const RelatedArticleItem = ({ article }: RelatedArticleItemProps) => {
             transition-all duration-100
             cursor-pointer"
       >
-        <label className="text-sm pointer-events-none flex-shrink-0">
-          {title}
-        </label>
+        <label className="text-sm pointer-events-none shrink-0">{title}</label>
         <div className="text-xs italic pointer-events-none text-gray-500 text-ellipsis overflow-hidden whitespace-nowrap">
           {path}
         </div>

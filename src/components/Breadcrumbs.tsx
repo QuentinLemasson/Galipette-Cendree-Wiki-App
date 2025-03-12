@@ -14,7 +14,7 @@ const Breadcrumbs = ({ slug, addHome = false }: BreadcrumbsProps) => {
     // Start of Selection
     <nav
       aria-label="breadcrumb"
-      className="text-gray-700 sticky top-0 py-4 backdrop-blur shadow-xl -translate-x-8"
+      className="text-gray-700 sticky top-0 py-4 backdrop-blur-sm shadow-xl -translate-x-8"
       style={{
         width: "calc(100% + 64px)",
       }}

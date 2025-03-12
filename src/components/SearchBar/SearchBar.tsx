@@ -107,7 +107,7 @@ export const SearchBar = () => {
         onChange={handleInputChange}
         onFocus={() => setIsDropdownVisible(true)}
         placeholder="Rechercher un article..."
-        className="text-sm w-full px-2 py-0.5 rounded-lg border bg-zinc-700 border-gray-600 focus:outline-none focus:border-indigo-500"
+        className="text-sm w-full px-2 py-0.5 rounded-lg border bg-zinc-700 border-gray-600 focus:outline-hidden focus:border-indigo-500"
       />
       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">
         🔍

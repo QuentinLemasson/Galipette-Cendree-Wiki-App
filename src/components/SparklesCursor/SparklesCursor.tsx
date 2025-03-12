@@ -86,7 +86,7 @@ export function SparklesCursor() {
   return (
     <>
       <div
-        className="custom-cursor fixed pointer-events-none z-[100]"
+        className="custom-cursor fixed pointer-events-none z-100"
         style={{
           left: cursor.x,
           top: cursor.y,
