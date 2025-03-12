@@ -1,0 +1,48 @@
+---
+description: Main/General Rule
+globs: 
+alwaysApply: true
+---
+
+# Architecture
+
+Code architecture follow a classic NextJS folder app
+
+|
+|---> prisma
+|---> public
+|---> src
+    |---> app
+    |---> components
+    |---> store
+    |---> hooks
+    |---> types
+    |---> utils
+
+# Component
+
+Only use fonction components.
+Keep the component's file size to a maximum of 200 lines.
+Each component have to adress a single specific function.
+Document each component with jsdoc, and a quick summary of the component's function.
+
+# UseEffect Usage
+
+Keep the useEffect usage as minimal as possible.
+If applicable, prefer handling logic inside event handlers or reducers.
+
+If the use of useEffect is unavoidable, encapsulate it inside a custom hook in @src/hooks
+
+# Re-Rendering
+
+Try to optimize the components, events, reducers, etc to avoid unessessary renderings. 
+Use memoïzation if needed.
+
+# Libraries
+
+Do not use external libraries not already included in the project, unless explicitly asked.
+You can suggest new libraries, but wait for confirmation to use it.
+
+# Config
+
+- Tailwind => [tailwind.config.ts](mdc:tailwind.config.ts)
