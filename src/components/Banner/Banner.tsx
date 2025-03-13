@@ -4,6 +4,8 @@ import Link from "next/link";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { useRef } from "react";
 import { useTooltip } from "@/hooks/useTooltip";
+import { ThemeToggle } from "../ThemeToggle";
+
 export const Banner = () => {
   const userRef = useRef(null);
   const userTooltip = useTooltip({
@@ -26,8 +28,9 @@ export const Banner = () => {
           <SearchBar />
         </div>
 
-        {/* Profile Picture Placeholder */}
-        <div className="flex items-center justify-end">
+        {/* Theme Toggle and Profile */}
+        <div className="flex items-center justify-end gap-4">
+          <ThemeToggle />
           <span
             className="text-gray-500 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"
             ref={userRef}

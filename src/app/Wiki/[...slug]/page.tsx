@@ -89,10 +89,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </Sidebar>
 
             {/* Main Content */}
-            <SidebarInset className="mx-8 relative border-pink-900 border-2">
+            <SidebarInset className="px-16 relative">
               <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
-              <SidebarTrigger side="left" className="absolute top-0 left-0" />
-              <SidebarTrigger side="right" className="absolute top-0 right-0" />
+              <SidebarTrigger side="left" className="absolute top-1 left-1" />
+              <SidebarTrigger side="right" className="absolute top-1 right-1" />
               <ArticleContent title={title} content={processedContent} />
             </SidebarInset>
 
