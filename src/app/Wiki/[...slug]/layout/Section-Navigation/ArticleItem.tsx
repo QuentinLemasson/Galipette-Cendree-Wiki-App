@@ -13,13 +13,13 @@ export const ArticleItem = ({ article, isActive }: ArticleItemProps) => (
         h-6
         rounded-md
         text-sm flex items-center gap-6
-        hover:text-neutral-50 transition-colors
+        transition-colors
         group
-        ${isActive ? "text-indigo-400 bg-neutral-800" : "text-neutral-300"}
+        ${isActive ? "text-indigo-400 " : ""}
     `}
   >
     <div
-      className={`h-full w-0.5 bg-neutral-400 opacity-70 group-hover:bg-indigo-500 group-hover:opacity-100 transition-all`}
+      className={`h-full w-0.5 opacity-70 group-hover:bg-indigo-500 group-hover:opacity-100 transition-all`}
     />
     <span className="truncate">{article.title}</span>
   </Link>

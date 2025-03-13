@@ -12,8 +12,13 @@ import {
   getFolderTree,
 } from "@/data/articles";
 import { FolderTree } from "./layout/Section-Navigation/FolderTree";
-import { VersionTag } from "@/components/VersionTag/VersionTag";
-
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
 }
@@ -69,30 +74,46 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       .filter(article => article !== null);
 
     return (
-      <>
-        <Banner />
-        <div className="relative max-w-4xl mx-auto pt-12">
-          <div className="flex gap-8">
-            <aside className="fixed left-4 top-28">
-              <FolderTree initialData={folderTree} />
-            </aside>
-            <section className="w-full">
+      <div className="[--header-height:calc(--spacing(14))]">
+        <SidebarProvider className="flex flex-col">
+          <Banner />
+          <div className="flex flex-1">
+            <Sidebar
+              className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
+              side="left"
+              variant="inset"
+            >
+              <SidebarContent>
+                <FolderTree initialData={folderTree} />
+              </SidebarContent>
+            </Sidebar>
+
+            {/* Main Content */}
+            <SidebarInset className="mx-8 relative border-pink-900 border-2">
               <Breadcrumbs slug={["Wiki", ...decodedSlug]} addHome />
+              <SidebarTrigger side="left" className="absolute top-0 left-0" />
+              <SidebarTrigger side="right" className="absolute top-0 right-0" />
               <ArticleContent title={title} content={processedContent} />
-            </section>
-            <aside className="fixed right-16 top-28 flex flex-col">
-              <RecentArticlesWrapper currentArticle={{ title, path }} />
-              {allRelatedArticles?.length > 0 && (
-                <RelatedArticlesContainer
-                  title="Articles liés"
-                  articleList={allRelatedArticles}
-                />
-              )}
-            </aside>
+            </SidebarInset>
+
+            <Sidebar
+              className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
+              side="right"
+              variant="inset"
+            >
+              <SidebarContent>
+                <RecentArticlesWrapper currentArticle={{ title, path }} />
+                {allRelatedArticles?.length > 0 && (
+                  <RelatedArticlesContainer
+                    title="Articles liés"
+                    articleList={allRelatedArticles}
+                  />
+                )}
+              </SidebarContent>
+            </Sidebar>
           </div>
-        </div>
-        <VersionTag />
-      </>
+        </SidebarProvider>
+      </div>
     );
   } catch (error) {
     console.error("Error fetching article:", error);

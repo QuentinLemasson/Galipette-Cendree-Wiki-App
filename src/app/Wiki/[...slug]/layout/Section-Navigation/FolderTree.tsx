@@ -31,7 +31,7 @@ export const FolderTree = ({ initialData }: FolderTreeProps) => {
   }, [initialData]);
 
   return (
-    <nav className="w-64 bg-neutral-900 rounded-lg overflow-hidden">
+    <nav className="rounded-lg overflow-hidden">
       <div className="p-2 flex flex-col">
         {treeData.map(node => (
           <FolderItem

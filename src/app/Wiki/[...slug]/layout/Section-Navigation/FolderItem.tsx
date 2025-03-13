@@ -17,19 +17,17 @@ export const FolderItem = ({ node, level, activePath }: FolderItemProps) => {
       <button
         className={`
           w-full text-left flex items-center gap-1 py-1
-          hover:bg-neutral-800 transition-colors
+          transition-colors
           ${level > 0 ? "pl-6" : "pl-2"}
         `}
         onClick={() => setIsOpen(!isOpen)}
       >
         {hasItems && (
           <span
-            className={`iconify mdi--chevron-right ${isOpen ? "rotate-90" : ""} transition-transform text-neutral-400`}
+            className={`iconify mdi--chevron-right ${isOpen ? "rotate-90" : ""} transition-transform `}
           />
         )}
-        <span className="text-sm text-neutral-300 font-medium">
-          {node.name}
-        </span>
+        <span className="text-sm font-medium">{node.name}</span>
       </button>
 
       {isOpen && (

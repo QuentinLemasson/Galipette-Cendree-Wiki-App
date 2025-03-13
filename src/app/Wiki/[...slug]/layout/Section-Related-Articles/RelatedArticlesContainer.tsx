@@ -11,7 +11,7 @@ export const RelatedArticlesContainer = ({
   title,
 }: RelatedArticlesContainerProps) => {
   return (
-    <section className="rounded-lg right-16 p-4 top-24 w-72">
+    <section className="rounded-lg p-4">
       <h1 className="text-xl font-bold mb-2">{title}</h1>
       <ul className="flex flex-col gap-2">
         {articleList.map(article => (

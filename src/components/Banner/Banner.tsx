@@ -4,7 +4,6 @@ import Link from "next/link";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { useRef } from "react";
 import { useTooltip } from "@/hooks/useTooltip";
-
 export const Banner = () => {
   const userRef = useRef(null);
   const userTooltip = useTooltip({
@@ -15,8 +14,8 @@ export const Banner = () => {
   });
 
   return (
-    <div className="w-full bg-zinc-900 shadow-md fixed top-0 z-50">
-      <div className="max-w-10xl mx-auto px-6 py-2 grid grid-cols-banner">
+    <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
+      <div className="flex h-(--header-height) w-full items-center gap-2 px-4">
         {/* Website Name/Logo */}
         <Link href="/" className="text-xl font-bold text-gray-300">
           La Galipette Cendrée - Wiki
@@ -38,6 +37,6 @@ export const Banner = () => {
         </div>
       </div>
       {userTooltip}
-    </div>
+    </header>
   );
 };
