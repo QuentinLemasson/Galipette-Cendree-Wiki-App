@@ -6,11 +6,13 @@ import {
 } from "@radix-ui/react-collapsible";
 import {
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
 } from "./sidebar";
 import { ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type TTreeItem = {
   label: string;
@@ -46,20 +48,29 @@ export const TreeMenu = ({ item }: { item: TTreeMenu }) => {
   const { label, path, menus, items } = item;
 
   return (
-    <SidebarMenuItem>
-      <Collapsible
-        className="group/collapsible [&[data-state=open]>button>svg:last-child]:rotate-90"
-        defaultOpen={false}
-      >
+    <Collapsible defaultOpen={false}>
+      <SidebarMenuItem>
         {/* Current Folder menu  */}
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
+        <SidebarMenuButton asChild tooltip={label}>
+          <a href={path}>
             <Folder />
-            <div className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
-              {label} - {path}
-            </div>
-            <ChevronRight className="transition-transform ml-auto" />
-          </SidebarMenuButton>
+            <span className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
+              {label}
+            </span>
+          </a>
+        </SidebarMenuButton>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuAction
+            className={cn(
+              "[&[data-state=open]>svg]:rotate-90",
+              "w-6 h-6",
+              "flex items-center justify-center",
+              "top-1"
+            )}
+          >
+            <ChevronRight className="transition-transform ml-0" />
+            <span className="sr-only">Toggle</span>
+          </SidebarMenuAction>
         </CollapsibleTrigger>
         {/* Subfolders and articles */}
         <CollapsibleContent>
@@ -74,8 +85,8 @@ export const TreeMenu = ({ item }: { item: TTreeMenu }) => {
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>
-      </Collapsible>
-    </SidebarMenuItem>
+      </SidebarMenuItem>
+    </Collapsible>
   );
 };
 
