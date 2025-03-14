@@ -13,6 +13,7 @@ import {
 } from "./sidebar";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TooltipProvider } from "./tooltip";
 
 export type TTreeItem = {
   label: string;
@@ -31,11 +32,13 @@ export type TTreeMenu = TTreeItem & {
  */
 export const Tree = ({ items }: { items: TTreeMenu[] }) => {
   return (
-    <SidebarMenu>
-      {items.map((item, index) => (
-        <TreeMenu key={`${item.label}-${index}`} item={item} />
-      ))}
-    </SidebarMenu>
+    <TooltipProvider>
+      <SidebarMenu>
+        {items.map((item, index) => (
+          <TreeMenu key={`${item.label}-${index}`} item={item} />
+        ))}
+      </SidebarMenu>
+    </TooltipProvider>
   );
 };
 
@@ -51,7 +54,7 @@ export const TreeMenu = ({ item }: { item: TTreeMenu }) => {
     <Collapsible defaultOpen={false}>
       <SidebarMenuItem>
         {/* Current Folder menu  */}
-        <SidebarMenuButton asChild tooltip={label}>
+        <SidebarMenuButton asChild tooltip={path}>
           <a href={path}>
             <Folder />
             <span className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
@@ -102,10 +105,11 @@ export const TreeItem = ({ item }: { item: TTreeItem }) => {
     <SidebarMenuButton
       isActive={path === "button.tsx"}
       className="data-[active=true]:bg-transparent text-overflow-ellipsis overflow-hidden whitespace-nowrap"
+      tooltip={path}
     >
       <File />
       <div className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
-        {label} - {path}
+        {label}
       </div>
     </SidebarMenuButton>
   );
