@@ -14,7 +14,7 @@ import {
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "./tooltip";
-
+import Link from "next/link";
 export type TTreeItem = {
   label: string;
   path: string;
@@ -55,12 +55,12 @@ export const TreeMenu = ({ item }: { item: TTreeMenu }) => {
       <SidebarMenuItem>
         {/* Current Folder menu  */}
         <SidebarMenuButton asChild tooltip={path}>
-          <a href={path}>
+          <Link href={`/Wiki/${path}`}>
             <Folder />
             <span className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
               {label}
             </span>
-          </a>
+          </Link>
         </SidebarMenuButton>
         <CollapsibleTrigger asChild>
           <SidebarMenuAction
@@ -106,11 +106,14 @@ export const TreeItem = ({ item }: { item: TTreeItem }) => {
       isActive={path === "button.tsx"}
       className="data-[active=true]:bg-transparent text-overflow-ellipsis overflow-hidden whitespace-nowrap"
       tooltip={path}
+      asChild
     >
-      <File />
-      <div className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
-        {label}
-      </div>
+      <Link href={`/Wiki/${path}`}>
+        <File />
+        <div className="text-overflow-ellipsis overflow-hidden whitespace-nowrap">
+          {label}
+        </div>
+      </Link>
     </SidebarMenuButton>
   );
 };
