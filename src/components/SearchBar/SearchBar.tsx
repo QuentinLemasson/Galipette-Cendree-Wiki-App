@@ -3,8 +3,8 @@
 import { useState, useRef } from "react";
 import { SearchCache } from "@/utils/search/cache";
 import { SEARCH_CONFIG } from "@/utils/search/config";
-import { useClickOutside } from "@/utils/hooks/useClickOutside";
-import { useDebounce } from "@/utils/hooks/useDebounce";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { useDebounce } from "@/hooks/useDebounce";
 import SearchResults from "./SearchResults";
 import { Article } from "types/db.types";
 

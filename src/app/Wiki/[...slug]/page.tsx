@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Breadcrumbs from "@/components/Breadcrumbs";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import ArticleContent from "./layout/Section-Article-Content/ArticleContent";
 import { processArticleContent } from "@/utils/markdown/parseArticleContent";
 import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/RelatedArticlesContainer";
@@ -19,172 +19,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Tree } from "@/components/ui/tree";
+import { VersionTag } from "@/components/VersionTag/VersionTag";
+
 interface ArticlePageProps {
   params: Promise<{ slug: string[] }>;
 }
-
-const data = [
-  {
-    label: "Spells",
-    path: "Spells",
-    menus: [
-      {
-        label: "Evocation",
-        path: "Evocation",
-        menus: [],
-        items: [
-          {
-            label: "Fireball",
-            path: "Fireball",
-          },
-          {
-            label: "Thunderbolt",
-            path: "Thunderbolt",
-          },
-        ],
-      },
-      {
-        label: "Necromancy",
-        path: "Necromancy",
-        menus: [],
-        items: [
-          {
-            label: "Raise Dead",
-            path: "Raise Dead",
-          },
-          {
-            label: "Summon",
-            path: "Summon",
-          },
-        ],
-      },
-    ],
-    items: [
-      {
-        label: "Sourcery",
-        path: "Sourcery",
-      },
-      {
-        label: "Divine Magic",
-        path: "Divine Magic",
-      },
-      {
-        label: "Arcane Magic",
-        path: "Arcane Magic",
-      },
-    ],
-  },
-  {
-    label: "Classes",
-    path: "Classes",
-    menus: [],
-    items: [
-      {
-        label: "Wizard",
-        path: "Wizard",
-      },
-      {
-        label: "Cleric",
-        path: "Cleric",
-      },
-      {
-        label: "Paladin",
-        path: "Paladin",
-      },
-      {
-        label: "Rogue",
-        path: "Rogue",
-      },
-    ],
-  },
-  {
-    label: "Monsters",
-    path: "Monsters",
-    menus: [
-      {
-        label: "Beast",
-        path: "Beast",
-        menus: [
-          {
-            label: "Jungle",
-            path: "Jungle",
-            menus: [],
-            items: [
-              {
-                label: "Jungle Behemoth",
-                path: "Jungle Behemoth",
-              },
-              {
-                label: "Jungle Elemental",
-                path: "Jungle Elemental",
-              },
-            ],
-          },
-          {
-            label: "Desert",
-            path: "Desert",
-            menus: [],
-            items: [
-              {
-                label: "Giant Scorpion",
-                path: "Giant Scorpion",
-              },
-              {
-                label: "Sandworm",
-                path: "Sandworm",
-              },
-              {
-                label: "Sand Elemental",
-                path: "Sand Elemental",
-              },
-            ],
-          },
-        ],
-        items: [],
-      },
-      {
-        label: "Demon",
-        path: "Demon",
-        menus: [],
-        items: [
-          {
-            label: "Demon Lord",
-            path: "Demon Lord",
-          },
-          {
-            label: "Demon",
-            path: "Demon",
-          },
-        ],
-      },
-      {
-        label: "Undead",
-        path: "Undead",
-        menus: [],
-        items: [
-          {
-            label: "Skeleton",
-            path: "Skeleton",
-          },
-          {
-            label: "Zombie",
-            path: "Zombie",
-          },
-          {
-            label: "Ghoul",
-            path: "Ghoul",
-          },
-          {
-            label: "Vampire",
-            path: "Vampire",
-          },
-        ],
-      },
-    ],
-    items: [],
-  },
-];
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
@@ -248,7 +87,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             >
               <SidebarContent>
                 <FolderTree initialData={folderTree} />
-                <Tree items={data} />
               </SidebarContent>
             </Sidebar>
 
@@ -277,6 +115,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </Sidebar>
           </div>
         </SidebarProvider>
+        <VersionTag />
       </div>
     );
   } catch (error) {

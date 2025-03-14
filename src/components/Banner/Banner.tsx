@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { useRef } from "react";
 import { useTooltip } from "@/hooks/useTooltip";
-import { ThemeToggle } from "../ThemeToggle";
+import { ThemeToggle } from "../ui/ThemeToggle";
 
 export const Banner = () => {
   const userRef = useRef(null);

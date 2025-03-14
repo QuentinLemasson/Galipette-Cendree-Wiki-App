@@ -1,11 +1,16 @@
 import { FolderNode } from "@/types/wiki";
 import { TTreeItem, TTreeMenu } from "@/components/ui/tree";
 
-export const buildTree = (folders: FolderNode[]) => {
+/**
+ * Converts a FolderNode list structure to a TTreeMenu structure for the Tree component
+ * @param folders Array of FolderNode objects
+ * @returns TTreeMenu[] structure for the Tree component
+ */
+export const convertToTreeMenu = (folders: FolderNode[]): TTreeMenu[] => {
   const folderMap = new Map<number, FolderNode>();
-  const tree: FolderNode[] = [];
+  const rootFolders: FolderNode[] = [];
 
-  // Create map of all folders
+  // Create map of all folders with initialized children arrays
   folders.forEach(folder => {
     folderMap.set(folder.id, { ...folder, children: [] });
   });
@@ -13,7 +18,7 @@ export const buildTree = (folders: FolderNode[]) => {
   // Build tree structure
   folderMap.forEach(folder => {
     if (folder.parentId === 1 || folder.parentId === null) {
-      tree.push(folder);
+      rootFolders.push(folder);
     } else {
       const parent = folderMap.get(folder.parentId);
       if (parent) {
@@ -22,17 +27,6 @@ export const buildTree = (folders: FolderNode[]) => {
       }
     }
   });
-
-  return tree;
-};
-
-/**
- * Converts a FolderNode list structure to a TTreeMenu structure for the Tree component
- * @param folders Array of FolderNode objects
- * @returns TTreeMenu[] structure for the Tree component
- */
-export const convertToTreeMenu = (folders: FolderNode[]): TTreeMenu[] => {
-  const tree = buildTree(folders);
 
   // Function to recursively build the TTreeMenu structure with proper paths
   const buildTreeMenu = (
@@ -63,7 +57,7 @@ export const convertToTreeMenu = (folders: FolderNode[]): TTreeMenu[] => {
   };
 
   // Convert each top-level folder to a TTreeMenu
-  return tree.map(folder => buildTreeMenu(folder));
+  return rootFolders.map(folder => buildTreeMenu(folder));
 };
 
 export const sortTreeItems = (a: FolderNode, b: FolderNode): number => {
