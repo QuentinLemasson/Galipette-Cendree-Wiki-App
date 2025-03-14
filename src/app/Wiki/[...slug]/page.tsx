@@ -85,7 +85,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               side="left"
               variant="inset"
             >
-              <SidebarContent>
+              <SidebarContent
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                }}
+              >
                 <FolderTree initialData={folderTree} />
               </SidebarContent>
             </Sidebar>
