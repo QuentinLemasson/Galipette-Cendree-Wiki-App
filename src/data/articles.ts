@@ -112,7 +112,7 @@ export async function searchArticles(query: string): Promise<Article[]> {
       },
       take: 10,
     });
-    return articles as Article[];
+    return articles as unknown as Article[];
   } catch (error) {
     console.error("Error searching articles:", error);
     throw error;
@@ -165,7 +165,7 @@ export async function getRelatedArticlesByTags(
         },
       },
       take: 5,
-    })) as Article[];
+    })) as unknown as Article[];
   } catch (error) {
     console.error("Error fetching related articles by tags:", error);
     throw error;
