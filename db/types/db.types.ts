@@ -6,8 +6,8 @@ export interface Article {
   path: string;
   metadata: Record<string, unknown>;
   folder_id?: number;
-  related_articles?: Article[];
-  mention_articles?: Article[];
+  related_articles: Article[];
+  mention_articles: Article[];
   tags?: ArticleTag[];
 }
 

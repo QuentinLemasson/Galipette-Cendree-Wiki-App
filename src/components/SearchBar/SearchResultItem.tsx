@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Article } from "types/db.types";
+import { Article } from "db/types/db.types";
 
 interface SearchResultItemProps {
   result: Article;

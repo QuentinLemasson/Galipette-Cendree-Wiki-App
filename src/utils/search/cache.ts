@@ -1,4 +1,4 @@
-import { Article } from "types/db.types";
+import { Article } from "db/types/db.types";
 
 class CacheEntry {
   constructor(

@@ -15,7 +15,7 @@ import { ArticleLinkElement } from "@/app/Wiki/[...slug]/layout/Section-Article-
 
 import { Schema } from "/rehype-sanitize/lib";
 import { remarkWikiLinks } from "./remarkWikiLinks.lib";
-import { Article } from "types/db.types";
+import { Article } from "db/types/db.types";
 
 // Define sanitization schema
 const sanitizationSchema: Schema = {

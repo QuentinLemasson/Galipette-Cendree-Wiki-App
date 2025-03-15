@@ -17,7 +17,7 @@ export const Banner = () => {
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
-      <div className="flex h-(--header-height) w-full items-center gap-2 px-4">
+      <div className="w-full gap-2 px-4 py-1 grid grid-cols-banner">
         {/* Website Name/Logo */}
         <Link href="/" className="text-xl font-bold text-gray-300">
           La Galipette Cendrée - Wiki
@@ -32,7 +32,7 @@ export const Banner = () => {
         <div className="flex items-center justify-end gap-4">
           <ThemeToggle />
           <span
-            className="text-gray-500 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"
+            className="text-gray-500 w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center"
             ref={userRef}
           >
             👤

@@ -6,7 +6,7 @@ import {
   TextNode,
   WikiLinkNode,
 } from "./remarkWikiLinks.type";
-import { Article } from "types/db.types";
+import { Article } from "db/types/db.types";
 import { removeRootFolderFromPath } from "../path/pathFormat.lib";
 
 // Add interface for plugin options

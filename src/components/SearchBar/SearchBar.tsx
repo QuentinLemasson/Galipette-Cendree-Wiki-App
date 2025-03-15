@@ -6,7 +6,7 @@ import { SEARCH_CONFIG } from "@/utils/search/config";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useDebounce } from "@/hooks/useDebounce";
 import SearchResults from "./SearchResults";
-import { Article } from "types/db.types";
+import { Article } from "db/types/db.types";
 
 interface SearchState {
   results: Article[];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Article } from "types/db.types";
+import { Article } from "db/types/db.types";
 import { RelatedArticlesContainer } from "../Section-Related-Articles/RelatedArticlesContainer";
 
 interface RecentArticlesWrapperProps {
