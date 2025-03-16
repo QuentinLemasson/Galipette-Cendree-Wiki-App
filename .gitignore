@@ -47,5 +47,8 @@ next-env.d.ts
 db/db.schema.md
 db/reset_schema.sql
 
+# prisma migrations
+prisma/migrations/*
+
 # script logs
 db/script-logs/*
