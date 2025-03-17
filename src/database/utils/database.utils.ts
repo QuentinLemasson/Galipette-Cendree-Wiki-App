@@ -1,11 +1,8 @@
 import type { Article, PrismaClient } from "@prisma/client";
 import path from "path";
-import {
-  extractMetadata,
-  formatArticlePath,
-} from "../../src/database/utils/markdown.utils.ts";
+import { extractMetadata, formatArticlePath } from "../utils/markdown.utils";
 import fs from "fs";
-import { Logger } from "./logger.utils.ts";
+import { Logger } from "../../utils/logger/logger.utils";
 
 /**
  * Ensures the root folder exists in the database and returns its ID.

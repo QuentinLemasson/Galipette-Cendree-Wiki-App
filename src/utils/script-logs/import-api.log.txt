@@ -1,0 +1,463 @@
+[17/03/2025-21:48:50] ==================================================
+[17/03/2025-21:48:50] Import started at: 17/03/2025-21:48:50
+[17/03/2025-21:48:50] ==================================================
+
+[17/03/2025-21:48:50] 🚀 Importing from local Git repository: G:/Mon Drive/Manuel Galipette Cendrée (branch: dev, subdir: Remote-Wiki)
+[17/03/2025-21:48:50] 🔄 Checked out branch: dev
+[17/03/2025-21:48:50] ℹ️ No remote branch dev found, using local branch
+[17/03/2025-21:48:50] 📁 Using wiki directory: G:\Mon Drive\Manuel Galipette Cendrée\Remote-Wiki
+[17/03/2025-21:48:50] 📁 Found 107 Markdown files. Starting import...
+[17/03/2025-21:48:50] 📚 Starting to insert articles into the database...
+[17/03/2025-21:48:50] 📁 Created root folder
+[17/03/2025-21:48:50] 📄 Processing article -> Accueil with path: Accueil (folder: .)
+[17/03/2025-21:48:50] ✅ Processed article: Accueil
+[17/03/2025-21:48:50] 📄 Processing article -> Guilde with path: Guilde (folder: .)
+[17/03/2025-21:48:50] ✅ Processed article: Guilde
+[17/03/2025-21:48:50] 📄 Processing article -> home with path: home (folder: .)
+[17/03/2025-21:48:50] ✅ Processed article: home
+[17/03/2025-21:48:50] 📄 Processing article -> Compétences de l'ancienne Galipette with path: Compétences_de_l'ancienne_Galipette (folder: .)
+[17/03/2025-21:48:50] ✅ Processed article: Compétences de l'ancienne Galipette
+[17/03/2025-21:48:50] 📁 Created new folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Activités with path: Jeu/Activités (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Activités
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Interactions sociales with path: Jeu/Interactions_sociales (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Interactions sociales
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Exploration with path: Jeu/Exploration (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Exploration
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Combat with path: Jeu/Combat (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Combat
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Equipement with path: Jeu/Equipement (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Equipement
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Magie with path: Jeu/Magie (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Magie
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Listes actions with path: Jeu/Listes_actions (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Listes actions
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📁 Created new folder: Actions (ID: 45)
+[17/03/2025-21:48:50] 📄 Processing article -> se cacher with path: Jeu/Actions/se_cacher (folder: Jeu/Actions)
+[17/03/2025-21:48:50] ✅ Processed article: se cacher
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Actions (ID: 45)
+[17/03/2025-21:48:50] 📄 Processing article -> embusquer with path: Jeu/Actions/embusquer (folder: Jeu/Actions)
+[17/03/2025-21:48:50] ✅ Processed article: embusquer
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Actions (ID: 45)
+[17/03/2025-21:48:50] 📄 Processing article -> charger with path: Jeu/Actions/charger (folder: Jeu/Actions)
+[17/03/2025-21:48:50] ✅ Processed article: charger
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Actions (ID: 45)
+[17/03/2025-21:48:50] 📄 Processing article -> Intimider with path: Jeu/Actions/Intimider (folder: Jeu/Actions)
+[17/03/2025-21:48:50] ✅ Processed article: Intimider
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Actions (ID: 45)
+[17/03/2025-21:48:50] 📄 Processing article -> Actions with path: Jeu/Actions/index (folder: Jeu/Actions)
+[17/03/2025-21:48:50] ✅ Processed article: Actions
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Jets with path: Jeu/Jets (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Jets
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📄 Processing article -> Initiative with path: Jeu/Initiative (folder: Jeu)
+[17/03/2025-21:48:50] ✅ Processed article: Initiative
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] 📁 Created new folder: Jets (ID: 46)
+[17/03/2025-21:48:50] 📄 Processing article -> Test with path: Jeu/Jets/Test (folder: Jeu/Jets)
+[17/03/2025-21:48:50] ✅ Processed article: Test
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jeu (ID: 44)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Jets (ID: 46)
+[17/03/2025-21:48:50] 📄 Processing article -> Modificateurs with path: Jeu/Jets/Modificateurs (folder: Jeu/Jets)
+[17/03/2025-21:48:50] ✅ Processed article: Modificateurs
+[17/03/2025-21:48:50] 📁 Created new folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] 📄 Processing article -> Domaines with path: Personnage/Domaines (folder: Personnage)
+[17/03/2025-21:48:50] ✅ Processed article: Domaines
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] 📄 Processing article -> Sauvegardes with path: Personnage/Sauvegardes (folder: Personnage)
+[17/03/2025-21:48:50] ✅ Processed article: Sauvegardes
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] 📄 Processing article -> Attributs with path: Personnage/Attributs (folder: Personnage)
+[17/03/2025-21:48:50] ✅ Processed article: Attributs
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] 📄 Processing article -> Créer un personnage with path: Personnage/Créer_un_personnage (folder: Personnage)
+[17/03/2025-21:48:50] ✅ Processed article: Créer un personnage
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] 📄 Processing article -> Races with path: Personnage/Races (folder: Personnage)
+[17/03/2025-21:48:50] ✅ Processed article: Races
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] 📁 Created new folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Humain with path: Personnage/Races_Jouables/Humain (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Humain
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Elfe d’Azur with path: Personnage/Races_Jouables/Elfe_d’Azur (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Elfe d’Azur
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Elfe Noir with path: Personnage/Races_Jouables/Elfe_Noir (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Elfe Noir
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Elfe Sylvestre with path: Personnage/Races_Jouables/Elfe_Sylvestre (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Elfe Sylvestre
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Orc with path: Personnage/Races_Jouables/Orc (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Orc
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Gobelin with path: Personnage/Races_Jouables/Gobelin (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Gobelin
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Troll with path: Personnage/Races_Jouables/Troll (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Troll
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Nain with path: Personnage/Races_Jouables/Nain (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Nain
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Drakéïde with path: Personnage/Races_Jouables/Drakéïde (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Drakéïde
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Bestial with path: Personnage/Races_Jouables/Bestial (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Bestial
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Elain with path: Personnage/Races_Jouables/Elain (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Elain
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Aeglya with path: Personnage/Races_Jouables/Aeglya (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Aeglya
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Triton with path: Personnage/Races_Jouables/Triton (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Triton
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Vespid with path: Personnage/Races_Jouables/Vespid (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Vespid
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Varhann with path: Personnage/Races_Jouables/Varhann (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Varhann
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Golm with path: Personnage/Races_Jouables/Golm (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Golm
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Génasi with path: Personnage/Races_Jouables/Génasi (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Génasi
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:50] 📄 Processing article -> Mort-vivant with path: Personnage/Races_Jouables/Mort-vivant (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:50] ✅ Processed article: Mort-vivant
+[17/03/2025-21:48:50] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:51] 📄 Processing article -> Céleste with path: Personnage/Races_Jouables/Céleste (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:51] ✅ Processed article: Céleste
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:51] 📄 Processing article -> Démon with path: Personnage/Races_Jouables/Démon (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:51] ✅ Processed article: Démon
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:51] 📄 Processing article -> Mutant with path: Personnage/Races_Jouables/Mutant (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:51] ✅ Processed article: Mutant
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:51] 📄 Processing article -> Faune with path: Personnage/Races_Jouables/Faune (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:51] ✅ Processed article: Faune
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:51] 📄 Processing article -> Buisson with path: Personnage/Races_Jouables/Buisson (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:51] ✅ Processed article: Buisson
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:51] 📄 Processing article -> Fée with path: Personnage/Races_Jouables/Fée (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:51] ✅ Processed article: Fée
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Races_Jouables (ID: 48)
+[17/03/2025-21:48:51] 📄 Processing article -> Automate with path: Personnage/Races_Jouables/Automate (folder: Personnage/Races_Jouables)
+[17/03/2025-21:48:51] ✅ Processed article: Automate
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Personnage (ID: 47)
+[17/03/2025-21:48:51] 📄 Processing article -> Personnage with path: Personnage/index (folder: Personnage)
+[17/03/2025-21:48:51] ✅ Processed article: Personnage
+[17/03/2025-21:48:51] 📁 Created new folder: Domaines_Martiaux (ID: 49)
+[17/03/2025-21:48:51] 📄 Processing article -> Armes de contact with path: Domaines_Martiaux/Armes_de_contact (folder: Domaines_Martiaux)
+[17/03/2025-21:48:51] ✅ Processed article: Armes de contact
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Martiaux (ID: 49)
+[17/03/2025-21:48:51] 📄 Processing article -> Armes de tir with path: Domaines_Martiaux/Armes_de_tir (folder: Domaines_Martiaux)
+[17/03/2025-21:48:51] ✅ Processed article: Armes de tir
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Martiaux (ID: 49)
+[17/03/2025-21:48:51] 📄 Processing article -> Arts Martiaux with path: Domaines_Martiaux/Arts_Martiaux (folder: Domaines_Martiaux)
+[17/03/2025-21:48:51] ✅ Processed article: Arts Martiaux
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Martiaux (ID: 49)
+[17/03/2025-21:48:51] 📄 Processing article -> Danse de l'étoffe lustrée with path: Domaines_Martiaux/Danse_de_l'étoffe_lustrée (folder: Domaines_Martiaux)
+[17/03/2025-21:48:51] ✅ Processed article: Danse de l'étoffe lustrée
+[17/03/2025-21:48:51] 📁 Created new folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole Fondamentale with path: Domaines_Magiques/Ecole_Fondamentale (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole Fondamentale
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole des Eléments with path: Domaines_Magiques/Ecole_des_Eléments (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole des Eléments
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole de la Nature with path: Domaines_Magiques/Ecole_de_la_Nature (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole de la Nature
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole de l'Animal with path: Domaines_Magiques/Ecole_de_l'Animal (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole de l'Animal
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole de l'Ombre with path: Domaines_Magiques/Ecole_de_l'Ombre (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole de l'Ombre
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole de la Lumière with path: Domaines_Magiques/Ecole_de_la_Lumière (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole de la Lumière
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole de l'Esprit with path: Domaines_Magiques/Ecole_de_l'Esprit (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole de l'Esprit
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole du Linceul with path: Domaines_Magiques/Ecole_du_Linceul (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole du Linceul
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Magiques (ID: 50)
+[17/03/2025-21:48:51] 📄 Processing article -> Ecole de la Conjuration with path: Domaines_Magiques/Ecole_de_la_Conjuration (folder: Domaines_Magiques)
+[17/03/2025-21:48:51] ✅ Processed article: Ecole de la Conjuration
+[17/03/2025-21:48:51] 📁 Created new folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Enchantement with path: Domaines_Techniques/Enchantement (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Enchantement
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Alchimie with path: Domaines_Techniques/Alchimie (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Alchimie
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Culte with path: Domaines_Techniques/Culte (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Culte
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Dressage with path: Domaines_Techniques/Dressage (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Dressage
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Forge with path: Domaines_Techniques/Forge (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Forge
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Ingénierie with path: Domaines_Techniques/Ingénierie (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Ingénierie
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Performance with path: Domaines_Techniques/Performance (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Performance
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Médecine with path: Domaines_Techniques/Médecine (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Médecine
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Tactique with path: Domaines_Techniques/Tactique (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Tactique
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Domaines_Techniques (ID: 51)
+[17/03/2025-21:48:51] 📄 Processing article -> Traqueur with path: Domaines_Techniques/Traqueur (folder: Domaines_Techniques)
+[17/03/2025-21:48:51] ✅ Processed article: Traqueur
+[17/03/2025-21:48:51] 📁 Created new folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Verve Provocatrice with path: Compétences/Verve_Provocatrice (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Verve Provocatrice
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Encouragement with path: Compétences/Encouragement (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Encouragement
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Hurlement Strident with path: Compétences/Hurlement_Strident (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Hurlement Strident
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Maitrise (Instrument) with path: Compétences/Maitrise_(Instrument) (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Maitrise (Instrument)
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Eloquence with path: Compétences/Eloquence (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Eloquence
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Intimidation with path: Compétences/Intimidation (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Intimidation
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Séduction with path: Compétences/Séduction (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Séduction
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Marchandage with path: Compétences/Marchandage (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Marchandage
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Enduit Elementaire with path: Compétences/Enduit_Elementaire (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Enduit Elementaire
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Maîtrise escalade with path: Compétences/Maîtrise_escalade (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Maîtrise escalade
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Maîtrise nage with path: Compétences/Maîtrise_nage (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Maîtrise nage
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Lancer puissant with path: Compétences/Lancer_puissant (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Lancer puissant
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Posture brutale with path: Compétences/Posture_brutale (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Posture brutale
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Frappe Furtive with path: Compétences/Frappe_Furtive (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Frappe Furtive
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Danse envoûtante with path: Compétences/Danse_envoûtante (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Danse envoûtante
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Construction Précipitée with path: Compétences/Construction_Précipitée (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Construction Précipitée
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Poutrage en masse with path: Compétences/Poutrage_en_masse (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Poutrage en masse
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Odre d'Assaut with path: Compétences/Odre_d'Assaut (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Odre d'Assaut
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Compagnon Animal with path: Compétences/Compagnon_Animal (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Compagnon Animal
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Parterre De Fleur with path: Compétences/Parterre_De_Fleur (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Parterre De Fleur
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Compétences (ID: 52)
+[17/03/2025-21:48:51] 📄 Processing article -> Compétences with path: Compétences/index (folder: Compétences)
+[17/03/2025-21:48:51] ✅ Processed article: Compétences
+[17/03/2025-21:48:51] 📁 Created new folder: Ressources (ID: 53)
+[17/03/2025-21:48:51] 📄 Processing article -> Liste PNJ with path: Ressources/Liste_PNJ (folder: Ressources)
+[17/03/2025-21:48:51] ✅ Processed article: Liste PNJ
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Ressources (ID: 53)
+[17/03/2025-21:48:51] 📁 Created new folder: PNJ (ID: 54)
+[17/03/2025-21:48:51] 📄 Processing article -> Armand with path: Ressources/PNJ/Armand (folder: Ressources/PNJ)
+[17/03/2025-21:48:51] ✅ Processed article: Armand
+[17/03/2025-21:48:51] 📁 Created new folder: Aspects (ID: 55)
+[17/03/2025-21:48:51] 📄 Processing article -> Aspects Bestiaux with path: Aspects/Aspects_Bestiaux (folder: Aspects)
+[17/03/2025-21:48:51] ✅ Processed article: Aspects Bestiaux
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Aspects (ID: 55)
+[17/03/2025-21:48:51] 📄 Processing article -> Aspects Insectoïdes with path: Aspects/Aspects_Insectoïdes (folder: Aspects)
+[17/03/2025-21:48:51] ✅ Processed article: Aspects Insectoïdes
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Aspects (ID: 55)
+[17/03/2025-21:48:51] 📄 Processing article -> Aspects Aviaires with path: Aspects/Aspects_Aviaires (folder: Aspects)
+[17/03/2025-21:48:51] ✅ Processed article: Aspects Aviaires
+[17/03/2025-21:48:51] 📄 Processing article -> Effet critiques with path: Effet_critiques (folder: .)
+[17/03/2025-21:48:51] ✅ Processed article: Effet critiques
+[17/03/2025-21:48:51] 📄 Processing article -> Pousser with path: Pousser (folder: .)
+[17/03/2025-21:48:51] ✅ Processed article: Pousser
+[17/03/2025-21:48:51] 📄 Processing article -> Défi de groupe with path: Défi_de_groupe (folder: .)
+[17/03/2025-21:48:51] ✅ Processed article: Défi de groupe
+[17/03/2025-21:48:51] 📁 Created new folder: Altérations (ID: 56)
+[17/03/2025-21:48:51] 📄 Processing article -> Altérations with path: Altérations/index (folder: Altérations)
+[17/03/2025-21:48:51] ✅ Processed article: Altérations
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Altérations (ID: 56)
+[17/03/2025-21:48:51] 📄 Processing article -> Pris au dépourvu with path: Altérations/Pris_au_dépourvu (folder: Altérations)
+[17/03/2025-21:48:51] ✅ Processed article: Pris au dépourvu
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Altérations (ID: 56)
+[17/03/2025-21:48:51] 📄 Processing article -> Exposé with path: Altérations/Exposé (folder: Altérations)
+[17/03/2025-21:48:51] ✅ Processed article: Exposé
+[17/03/2025-21:48:51] ℹ️ Found existing folder: Altérations (ID: 56)
+[17/03/2025-21:48:51] 📄 Processing article -> Inarperçu with path: Altérations/Inarperçu (folder: Altérations)
+[17/03/2025-21:48:51] ✅ Processed article: Inarperçu
+[17/03/2025-21:48:51] 📚 Starting to insert relations into the database...
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Personnage/Créer_un_personnage
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Personnage/Attributs
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Personnage/Sauvegardes
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Jeu/Combat
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Jeu/Exploration
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Jeu/Interactions_sociales
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Jeu/Activités
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Personnage/Domaines
+[17/03/2025-21:48:51] 🔗 Created relation: Accueil -> Guilde
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Jeu/Actions/index
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Jeu/Initiative
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Altérations/Inarperçu
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Personnage/Sauvegardes
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Altérations/Exposé
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Altérations/Pris_au_dépourvu
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Jeu/Actions/index
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Combat -> Défi_de_groupe
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Actions/index -> Jeu/Combat
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Actions/index -> Personnage/index
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Actions/index -> Jeu/Actions/charger
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Actions/index -> Jeu/Actions/embusquer
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Actions/index -> Jeu/Actions/Intimider
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Actions/index -> Jeu/Actions/se_cacher
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Jets/Test -> Personnage/Attributs
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Jets/Test -> Jeu/Jets/Modificateurs
+[17/03/2025-21:48:51] 🔗 Created relation: Jeu/Jets/Test -> Personnage/index
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Martiaux/Armes_de_contact
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Martiaux/Armes_de_tir
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_Fondamentale
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_des_Eléments
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_de_la_Nature
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_de_l'Animal
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_de_l'Ombre
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_de_la_Lumière
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_de_l'Esprit
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_du_Linceul
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Magiques/Ecole_de_la_Conjuration
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Alchimie
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Culte
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Dressage
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Enchantement
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Forge
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Ingénierie
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Performance
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Médecine
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Domaines -> Domaines_Techniques/Tactique
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Humain
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Elfe_d’Azur
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Elfe_Noir
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Elfe_Sylvestre
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Orc
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Gobelin
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Troll
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Nain
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Drakéïde
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Bestial
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Elain
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Aeglya
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Triton
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Vespid
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Varhann
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Fée
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Buisson
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Faune
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Automate
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Génasi
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Mort-vivant
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Céleste
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Démon
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races -> Personnage/Races_Jouables/Mutant
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races_Jouables/Bestial -> Aspects/Aspects_Bestiaux
+[17/03/2025-21:48:51] 🔗 Created relation: Personnage/Races_Jouables/Vespid -> Aspects/Aspects_Insectoïdes
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Martiaux/Armes_de_contact -> Compétences/Frappe_Furtive
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Martiaux/Armes_de_contact -> Compétences/Lancer_puissant
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Martiaux/Armes_de_contact -> Compétences/Posture_brutale
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Martiaux/Arts_Martiaux -> Compétences/Frappe_Furtive
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Martiaux/Arts_Martiaux -> Compétences/Posture_brutale
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Magiques/Ecole_de_la_Nature -> Compétences/Parterre_De_Fleur
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Alchimie -> Compétences/Poutrage_en_masse
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Ingénierie -> Compétences/Construction_Précipitée
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Danse_envoûtante
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Eloquence
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Encouragement
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Hurlement_Strident
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Intimidation
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Maitrise_(Instrument)
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Marchandage
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Poutrage_en_masse
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Séduction
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Performance -> Compétences/Verve_Provocatrice
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Tactique -> Compétences/Encouragement
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Tactique -> Compétences/Odre_d'Assaut
+[17/03/2025-21:48:51] 🔗 Created relation: Domaines_Techniques/Traqueur -> Compétences/Compagnon_Animal
+[17/03/2025-21:48:51] 🔗 Created relation: Aspects/Aspects_Bestiaux -> Jeu/Actions/se_cacher
+[17/03/2025-21:48:51] 🔗 Created relation: Aspects/Aspects_Bestiaux -> Jeu/Actions/embusquer
+[17/03/2025-21:48:51] 🔗 Created relation: Aspects/Aspects_Aviaires -> Jeu/Actions/se_cacher
+[17/03/2025-21:48:51] 🔗 Created relation: Défi_de_groupe -> Jeu/Jets/Test
+[17/03/2025-21:48:51] 🔗 Created relation: Altérations/index -> Personnage/index
+[17/03/2025-21:48:51] ✅ Import completed successfully.
+[17/03/2025-21:48:51] 🔌 Disconnected from database.
+[17/03/2025-21:48:51] ==================================================
+[17/03/2025-21:48:51] Import finished at: 17/03/2025-21:48:51
+[17/03/2025-21:48:51] ==================================================
+

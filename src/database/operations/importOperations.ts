@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Logger } from "@/utils/logger/logger.utils";
+import { Logger } from "../../utils/logger/logger.utils";
 import { importFromLocalGit } from "./importWithLocalGitOperations";
 import {
   importFromWebhook,

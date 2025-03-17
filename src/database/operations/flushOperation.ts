@@ -1,4 +1,6 @@
-import { prisma } from "./importOperations";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 /**
  * Flushes all data from the database using Prisma
