@@ -1,4 +1,4 @@
-import { flushDatabase } from "@/utils/db/dbOperations";
+import { flushDatabase } from "@/utils/db/importOperations";
 import { NextResponse } from "next/server";
 
 /**

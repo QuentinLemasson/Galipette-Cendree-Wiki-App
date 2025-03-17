@@ -6,7 +6,7 @@ A set of tools to manage a PostgreSQL database for a markdown-based wiki system.
 
 ## 🎯 Objectives
 
-- Import markdown files from a vault into a PostgreSQL database
+- Import markdown files from a local Git repository or webhook into a PostgreSQL database
 - Maintain relations between articles
 - Support metadata in YAML format
 - Provide clean logging of operations
@@ -36,26 +36,79 @@ For complete schema details, see [db.schema.md](db/db.schema.md)
 
 ## 📜 Scripts
 
-### Import Vault Content
+### Import from Local Git Repository (Development Mode)
+
+```bash
+npm run import-local-git [localGitPath] [branch] [wikiSubdir]
+```
+
+Imports markdown files from a local Git repository into the database. This is the recommended method for development.
+
+**Example:**
+
+```bash
+npm run import-local-git /path/to/local/git/repo main wiki
+```
+
+**Environment Variables Required:**
+
+- `LOCAL_GIT_PATH`: Path to the local Git repository
+- `GIT_BRANCH`: Branch to use (default: main)
+- `WIKI_DIRECTORY`: Subdirectory within the repository that contains the wiki files (optional)
+- `DB_URL`: PostgreSQL connection URL
+
+### Import from Legacy Vault (Deprecated)
 
 ```bash
 npm run import-vault
 ```
 
-Imports markdown files from a specified vault directory into the database.
+Imports markdown files from a specified local vault directory into the database. This method is deprecated.
 
 **Environment Variables Required:**
 
-- `VAULT_PATH`: Path to the vault directory
-- `DB_USER`: PostgreSQL username
-- `DB_HOST`: PostgreSQL host
-- `DB_DATABASE`: Database name
-- `DB_PASSWORD`: PostgreSQL password
-- `DB_PORT`: PostgreSQL port
-- `API_PORT`: Express server port (default: 3001)
-- `NEXT_PUBLIC_API_URL`: Frontend API URL
+- `VAULT_PATH`: Path to the local vault directory
+- `WIKI_DIRECTORY`: Subdirectory within the vault that contains the wiki files
+- `DB_URL`: PostgreSQL connection URL
 
-**Logs:** Located in `db/script-logs/import.log.txt`
+### API Endpoints
+
+#### Import API
+
+```
+POST /api/db/import
+```
+
+Request body for local Git repository (development mode):
+
+```json
+{
+  "mode": "local-git",
+  "localGitPath": "/path/to/local/git/repo",
+  "localGitBranch": "main",
+  "wikiSubdir": "wiki"
+}
+```
+
+Request body for webhook (production mode):
+
+```json
+{
+  "mode": "webhook",
+  "webhookPayload": {
+    /* GitHub webhook payload */
+  },
+  "wikiSubdir": "wiki"
+}
+```
+
+#### GitHub Webhook
+
+```
+POST /api/webhook/github
+```
+
+This endpoint is designed to be used with GitHub webhooks. It automatically processes push events to the configured branch and imports modified markdown files.
 
 ### Export Schema
 
@@ -64,6 +117,42 @@ npm run export-schema
 ```
 
 Exports current database schema to markdown format.
+
+---
+
+## 🔄 Dual-Mode Operation
+
+This system operates in two distinct modes:
+
+### 1. Development Mode (Local Git Repository)
+
+In development, the system reads markdown files directly from a local Git repository. This allows you to:
+
+- Work with a local copy of the wiki repository
+- Test changes before pushing to production
+- Use Git features like diffs and history
+
+### 2. Production Mode (GitHub Webhook)
+
+In production, the system processes webhook events from GitHub. This allows you to:
+
+- Automatically update the database when changes are pushed to the repository
+- Only process modified files, making updates efficient
+- Secure updates with webhook signatures
+
+---
+
+## 🔧 GitHub Webhook Setup
+
+1. Go to your GitHub repository
+2. Navigate to Settings > Webhooks
+3. Click "Add webhook"
+4. Set the Payload URL to: `https://your-domain.com/api/webhook/github`
+5. Set Content type to: `application/json`
+6. Set Secret to a secure random string (same as your GITHUB_WEBHOOK_SECRET env var)
+7. Select "Just the push event"
+8. Check "Active"
+9. Click "Add webhook"
 
 ---
 
