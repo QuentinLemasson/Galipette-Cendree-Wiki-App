@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
-import { Logger } from "./logger.utils.ts";
+import { Logger } from "../../utils/logger/logger.utils.ts";
 
 /**
  * Formats the article path by normalizing separators, removing the root vault path,

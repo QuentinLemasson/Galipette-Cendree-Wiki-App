@@ -1,4 +1,4 @@
-import { getFolderTree } from "@/data/articles";
+import { getFolderTree } from "@/database/utils/articles";
 import { NextResponse } from "next/server";
 
 /**

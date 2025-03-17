@@ -1,4 +1,4 @@
-import { importVaultContent } from "@/utils/db/importOperations";
+import { importVaultContent } from "@/database/operations/importOperations";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 

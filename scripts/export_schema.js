@@ -5,6 +5,8 @@ const { Client } = pg;
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 
+const schemaPath = path.resolve(__dirname, "../prisma/db.schema.md");
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -111,7 +113,6 @@ const generateMarkdown = async () => {
   }
 
   // Write to db.schema.md
-  const schemaPath = path.resolve(__dirname, "../db/db.schema.md");
   fs.writeFileSync(schemaPath, markdownLines.join("\n"), "utf8");
   console.log(`Database schema has been exported to ${schemaPath}`);
 };

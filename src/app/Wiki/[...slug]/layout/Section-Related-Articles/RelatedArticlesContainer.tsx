@@ -1,4 +1,4 @@
-import { Article } from "db/types/db.types";
+import { Article } from "@/database/types/db.types";
 import { RelatedArticleItem } from "./RelatedArticleItem";
 
 interface RelatedArticlesContainerProps {

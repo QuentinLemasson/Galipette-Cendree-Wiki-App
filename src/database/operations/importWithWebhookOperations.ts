@@ -1,10 +1,10 @@
 import { PrismaClient, Article } from "@prisma/client";
-import { Logger } from "db/script-utils/logger.utils";
-import { extractMetadata } from "db/script-utils/markdown.utils";
+import { Logger } from "@/utils/logger/logger.utils";
+import { extractMetadata } from "@/database/utils/markdown.utils";
 import {
   getOrCreateFolderHierarchy,
   insertRelations,
-} from "db/script-utils/database.utils";
+} from "@/database/utils/database.utils";
 import path from "path";
 
 // Type for webhook payload

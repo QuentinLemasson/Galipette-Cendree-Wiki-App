@@ -1,4 +1,4 @@
-import { getArticleByPath } from "@/data/articles";
+import { getArticleByPath } from "@/database/utils/articles";
 import { NextRequest, NextResponse } from "next/server";
 
 type RouteParams = {

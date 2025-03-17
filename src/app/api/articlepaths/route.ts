@@ -1,4 +1,4 @@
-import { getArticlePaths } from "@/data/articles";
+import { getArticlePaths } from "@/database/utils/articles";
 import { NextResponse } from "next/server";
 
 export async function GET() {

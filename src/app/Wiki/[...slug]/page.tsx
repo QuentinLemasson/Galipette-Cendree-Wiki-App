@@ -4,13 +4,13 @@ import ArticleContent from "./layout/Section-Article-Content/ArticleContent";
 import { processArticleContent } from "@/utils/markdown/parseArticleContent";
 import { RelatedArticlesContainer } from "./layout/Section-Related-Articles/RelatedArticlesContainer";
 import { RecentArticlesWrapper } from "./layout/Section-Recent-Articles/RecentArticlesWrapper";
-import { Article } from "db/types/db.types";
+import { Article } from "@/database/types/db.types";
 import { Banner } from "@/components/Banner/Banner";
 import {
   getArticleByPath,
   getArticlePaths,
   getFolderTree,
-} from "@/data/articles";
+} from "@/database/utils/articles";
 import { FolderTree } from "./layout/Section-Navigation/FolderTree";
 import {
   Sidebar,

@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { collectMarkdownFiles } from "./script-utils/markdown.utils.ts";
+import { collectMarkdownFiles } from "../src/database/utils/markdown.utils.ts";
 import {
   insertArticles,
   insertRelations,
-} from "./script-utils/database.utils.ts";
-import { Logger } from "./script-utils/logger.utils.ts";
+} from "../src/database/utils/database.utils.ts";
+import { Logger } from "../src/utils/logger/logger.utils.ts";
 
 dotenv.config({ path: ".env.local" });
 

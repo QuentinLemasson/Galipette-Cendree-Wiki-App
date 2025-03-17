@@ -1,4 +1,4 @@
-import { getRelatedArticlesByTags } from "@/data/articles";
+import { getRelatedArticlesByTags } from "@/database/utils/articles";
 import { NextRequest, NextResponse } from "next/server";
 
 type RouteParams = {

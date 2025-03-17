@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Article } from "db/types/db.types";
+import { Article } from "@/database/types/db.types";
 
 /**
  * Retrieves all article paths from the database in alphabetical order

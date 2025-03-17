@@ -1,4 +1,4 @@
-import { searchArticles } from "@/data/articles";
+import { searchArticles } from "@/database/utils/articles";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

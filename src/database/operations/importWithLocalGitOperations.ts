@@ -3,12 +3,12 @@ import fs from "fs";
 import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { collectMarkdownFiles } from "db/script-utils/markdown.utils";
+import { collectMarkdownFiles } from "@/database/utils/markdown.utils";
 import {
   insertArticles,
   insertRelations,
-} from "db/script-utils/database.utils";
-import { Logger } from "db/script-utils/logger.utils";
+} from "@/database/utils/database.utils";
+import { Logger } from "@/utils/logger/logger.utils";
 
 const execPromise = promisify(exec);
 
