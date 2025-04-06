@@ -1,51 +1,106 @@
-import { importVaultContent } from "@/database/operations/importOperations";
 import { NextResponse } from "next/server";
+import { ImportManager, LocalGitAdapter, WebhookAdapter } from "@/database";
+import { Logger } from "@/utils/logger/logger.utils";
 
 /**
- * @route POST /api/db/import
- * @description Imports markdown files into the database (supports both local-git and webhook modes)
- * @param {Object} request - The request object
- * @param {string} request.body.mode - 'local-git' for dev mode, 'webhook' for production mode
- * @param {string} request.body.localGitPath - Path to local Git repository (for dev mode)
- * @param {string} request.body.localGitBranch - Branch to use in local Git repository (for dev mode)
- * @param {string} request.body.wikiSubdir - Subdirectory within the repository that contains the wiki files
- * @param {Object} request.body.webhookPayload - GitHub/GitLab webhook payload (for production mode)
- * @returns {Object} Object containing import statistics
- * @returns {boolean} Object.success - Whether the import was successful
- * @returns {string} Object.message - A message describing the result of the operation
- * @returns {Object} Object.stats - Statistics about the import
- * @returns {number} Object.stats.articlesImported - The number of articles imported
- * @returns {number} Object.stats.relationsCreated - The number of relations created
- * @throws {Error} 500 - If there is an error importing the content
+ * GET /api/import/status
+ * Get the current import status
  */
-export async function POST(request: Request): Promise<NextResponse> {
+export async function GET() {
   try {
-    // Parse request body
-    const body = await request.json().catch(() => ({}));
+    const importManager = ImportManager.getInstance();
+    const logger = new Logger("api-import.log", "Import Status Check");
+    importManager.setLogger(logger);
 
-    // Default to local-git mode in development, webhook in production
-    const mode =
-      body.mode ||
-      (process.env.NODE_ENV === "development" ? "local-git" : "webhook");
+    const lastImport = await importManager.getLastImport();
 
-    // Call the importVaultContent function with the appropriate options
-    const result = await importVaultContent({
-      mode,
-      localGitPath: body.localGitPath,
-      localGitBranch: body.localGitBranch,
-      wikiSubdir: body.wikiSubdir,
-      webhookPayload: body.webhookPayload,
+    return NextResponse.json({
+      status: "success",
+      data: lastImport || { status: "never_imported" },
+    });
+  } catch (error) {
+    console.error("Error getting import status:", error);
+    return NextResponse.json(
+      { status: "error", message: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/import
+ * Trigger a new import
+ */
+export async function POST(request: Request) {
+  try {
+    console.log("Importing...");
+    // Parse request
+    const {
+      type = "diff",
+      source = "local-git",
+      payload = null,
+      branch = "dev",
+    } = await request.json();
+
+    // Setup environment variables
+    const vaultPath = process.env.VAULT_PATH;
+    const wikiDir = process.env.WIKI_DIRECTORY;
+
+    if (!vaultPath || !wikiDir) {
+      throw new Error(
+        "VAULT_PATH and WIKI_DIRECTORY environment variables must be set"
+      );
+    }
+
+    // Create a logger
+    const logger = new Logger("api-import.log", "Import Operation");
+
+    // Get ImportManager singleton
+    const importManager = ImportManager.getInstance();
+    importManager.setLogger(logger);
+
+    // Create the appropriate adapter based on source
+    // Use the adapter pattern to interface with the import source
+    let adapter;
+    if (
+      source === "webhook" &&
+      payload &&
+      process.env.NODE_ENV === "production"
+    ) {
+      logger.info("Creating webhook adapter", "🚀");
+      adapter = new WebhookAdapter(payload, wikiDir, null, logger);
+    } else {
+      logger.info("Creating local git adapter", "🚀");
+      adapter = new LocalGitAdapter(vaultPath, branch, wikiDir, logger);
+    }
+
+    // Run the import
+    const result = await importManager.import(adapter, {
+      mode: type === "full" ? "full" : "diff",
+      sourceType: source === "webhook" ? "webhook" : "local-git",
+      localGitPath: vaultPath,
+      localGitBranch: "main",
+      wikiSubdir: wikiDir,
+      webhookPayload: payload,
     });
 
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error("Error importing content:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Internal server error",
-        details: String(error),
+    logger.close();
+
+    // Return the result
+    return NextResponse.json({
+      status: result.success ? "success" : "error",
+      data: {
+        type,
+        commitHash: result.metadata.commitHash,
+        timestamp: new Date().toISOString(),
+        stats: result.stats,
+        message: result.message,
       },
+    });
+  } catch (error) {
+    console.error("Error triggering import:", error);
+    return NextResponse.json(
+      { status: "error", message: (error as Error).message },
       { status: 500 }
     );
   }

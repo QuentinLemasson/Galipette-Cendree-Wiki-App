@@ -73,4 +73,36 @@ model Folder {
 
   @@map("folders")
   @@index([parentId])
+}
+
+// TODO : refence the imported articles via foreign key
+// TODO : both should reference the same commit hash
+model ImportMetadata {
+  id          Int      @id @default(autoincrement())
+  filePath    String   @unique @map("file_path")
+  fileHash    String   @map("file_hash")
+  lastImport  DateTime @default(now()) @map("last_import")
+  importCount Int      @default(1) @map("import_count")
+  status      String   @default("success")
+  error       String?
+  metadata    Json     @default("{}")
+  commitHash  String?  @map("commit_hash")
+  gitStatus   String?  @map("git_status")
+
+  @@map("import_metadata")
+  @@index([filePath, fileHash])
+  @@index([commitHash])
+}
+
+model GitImportLog {
+  id            Int      @id @default(autoincrement())
+  commitHash    String   @unique @map("commit_hash")
+  importedAt    DateTime @default(now()) @map("imported_at")
+  status        String   @default("success")
+  error         String?
+  filesChanged  Int      @default(0) @map("files_changed")
+  metadata      Json     @default("{}")
+
+  @@map("git_import_logs")
+  @@index([commitHash])
 } 

@@ -1,78 +1,93 @@
-import { importVaultContent } from "@/database/operations/importOperations";
 import { NextResponse } from "next/server";
+import { execSync } from "child_process";
 import crypto from "crypto";
 
 /**
- * @route POST /api/webhook/github
- * @description Webhook endpoint for GitHub push events
- * @param {Object} request - The request object containing GitHub webhook payload
- * @returns {Object} Object containing import statistics
- * @throws {Error} 401 - If the webhook signature is invalid
- * @throws {Error} 500 - If there is an error processing the webhook
+ * Verify GitHub webhook signature
  */
-export async function POST(request: Request): Promise<NextResponse> {
+function verifySignature(payload: string, signature: string): boolean {
+  if (!process.env.GITHUB_WEBHOOK_SECRET) {
+    console.warn("GITHUB_WEBHOOK_SECRET is not set");
+    return false;
+  }
+
+  const hmac = crypto.createHmac("sha256", process.env.GITHUB_WEBHOOK_SECRET);
+  const calculatedSignature = `sha256=${hmac.update(payload).digest("hex")}`;
+  return crypto.timingSafeEqual(
+    Buffer.from(calculatedSignature),
+    Buffer.from(signature)
+  );
+}
+
+/**
+ * POST /api/webhook/github
+ * Handle GitHub webhook events
+ */
+export async function POST(request: Request) {
   try {
-    // Clone the request to read the body twice (once for verification, once for processing)
-    const clonedRequest = request.clone();
+    const payload = await request.text();
+    const signature = request.headers.get("x-hub-signature-256");
 
-    // Get the raw payload for signature verification
-    const rawPayload = await clonedRequest.text();
-    const payload = JSON.parse(rawPayload);
-
-    // Verify webhook signature if secret is configured
-    if (process.env.GITHUB_WEBHOOK_SECRET) {
-      const signature = request.headers.get("x-hub-signature-256");
-
-      if (!signature) {
-        return NextResponse.json(
-          { success: false, error: "Missing webhook signature" },
-          { status: 401 }
-        );
-      }
-
-      const hmac = crypto.createHmac(
-        "sha256",
-        process.env.GITHUB_WEBHOOK_SECRET
+    // Verify webhook signature
+    if (!signature || !verifySignature(payload, signature)) {
+      return NextResponse.json(
+        { status: "error", message: "Invalid signature" },
+        { status: 401 }
       );
-      hmac.update(rawPayload);
-      const calculatedSignature = `sha256=${hmac.digest("hex")}`;
-
-      if (signature !== calculatedSignature) {
-        return NextResponse.json(
-          { success: false, error: "Invalid webhook signature" },
-          { status: 401 }
-        );
-      }
     }
 
-    // Only process push events to the configured branch
-    const targetBranch = process.env.GIT_BRANCH || "main";
-    const branch = payload.ref?.replace("refs/heads/", "");
+    const event = request.headers.get("x-github-event");
+    const data = JSON.parse(payload);
 
-    if (branch !== targetBranch) {
+    // Only process push events to the main branch
+    if (event === "push" && data.ref === "refs/heads/main" && !data.deleted) {
+      // Run diff-based import
+      execSync("ts-node scripts/import-diff.script.ts", {
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          GITHUB_SHA: data.after,
+          GITHUB_BEFORE: data.before,
+        },
+      });
+
       return NextResponse.json({
-        success: true,
-        message: `Skipped import for branch ${branch} (only processing ${targetBranch})`,
+        status: "success",
+        data: {
+          event,
+          commitHash: data.after,
+          timestamp: new Date().toISOString(),
+        },
       });
     }
 
-    // Call the importVaultContent function with webhook mode
-    const result = await importVaultContent({
-      mode: "webhook",
-      webhookPayload: payload,
-      wikiSubdir: process.env.WIKI_DIRECTORY,
+    // Acknowledge other events
+    return NextResponse.json({
+      status: "success",
+      data: {
+        event,
+        message: "Event acknowledged but no action taken",
+      },
     });
-
-    return NextResponse.json(result);
   } catch (error) {
     console.error("Error processing webhook:", error);
     return NextResponse.json(
-      {
-        success: false,
-        error: "Internal server error",
-        details: String(error),
-      },
+      { status: "error", message: (error as Error).message },
       { status: 500 }
     );
   }
+}
+
+/**
+ * GET /api/webhook/github
+ * Test endpoint for webhook configuration
+ */
+export async function GET() {
+  return NextResponse.json({
+    status: "success",
+    data: {
+      message: "GitHub webhook endpoint is configured correctly",
+      timestamp: new Date().toISOString(),
+    },
+  });
 }

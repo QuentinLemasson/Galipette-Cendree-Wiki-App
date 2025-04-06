@@ -5,11 +5,13 @@ import { fileURLToPath } from "url";
 export class Logger {
   private logStream: fs.WriteStream;
   private logPath: string;
+  private operation: string;
 
-  constructor(filename: string) {
+  constructor(filename: string, operation: string = "Unknown Operation") {
+    this.operation = operation;
     // Ensure the logs directory exists
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const logsDir = path.join(__dirname, "..", "script-logs");
+    const logsDir = path.join(__dirname, "..", "..", "..", "logs");
     if (!fs.existsSync(logsDir)) {
       fs.mkdirSync(logsDir, { recursive: true });
     }
@@ -24,7 +26,10 @@ export class Logger {
 
     // Write header with formatted timestamp
     this.log("=".repeat(50), false);
-    this.log(`Import started at: ${this.formatTimestamp(new Date())}`, false);
+    this.log(
+      `${operation} started at: ${this.formatTimestamp(new Date())}`,
+      false
+    );
     this.log("=".repeat(50) + "\n", false);
   }
 
@@ -82,7 +87,10 @@ export class Logger {
 
   close() {
     this.log("=".repeat(50), false);
-    this.log(`Import finished at: ${this.formatTimestamp(new Date())}`, false);
+    this.log(
+      `${this.operation} finished at: ${this.formatTimestamp(new Date())}`,
+      false
+    );
     this.log("=".repeat(50) + "\n", false);
     this.logStream.end();
   }

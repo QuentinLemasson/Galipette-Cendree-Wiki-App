@@ -1,5 +1,6 @@
-import { flushDatabase } from "@/database/operations/flushOperation";
 import { NextResponse } from "next/server";
+import { DatabaseManager } from "@/database";
+import { Logger } from "@/utils/logger/logger.utils";
 
 /**
  * @route POST /api/db/flush
@@ -10,52 +11,27 @@ import { NextResponse } from "next/server";
  * @throws {Error} 500 - If there is an error flushing the database
  */
 export async function POST(): Promise<NextResponse> {
-  console.log("API route: /api/db/flush called");
-
   try {
-    // Check if DB_URL is configured
-    if (!process.env.DB_URL) {
-      console.error("DB_URL environment variable is not set");
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Database configuration error",
-          details: "DB_URL environment variable is not set",
-        },
-        { status: 500 }
-      );
-    }
+    // Create a logger
+    const logger = new Logger("api-flush.log");
 
-    console.log("Calling flushDatabase function...");
-    const result = await flushDatabase();
-    console.log("Database flush completed:", result);
+    // Get DatabaseManager singleton
+    const dbManager = DatabaseManager.getInstance();
+    dbManager.setLogger(logger);
 
-    return NextResponse.json(result);
+    // Run the flush operation
+    const result = await dbManager.flushDatabase();
+
+    // Return the result
+    return NextResponse.json({
+      status: "success",
+      data: result,
+    });
   } catch (error) {
-    console.error("API route error while flushing database:", error);
-
-    // Create a more detailed error response
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    const errorStack = error instanceof Error ? error.stack : undefined;
-
-    // Check for specific folder hierarchy error
-    const isFolderHierarchyError =
-      errorMessage.includes("FolderToFolder") ||
-      errorMessage.includes("required relation");
-
-    const errorResponse = {
-      success: false,
-      error: isFolderHierarchyError
-        ? "Folder hierarchy constraint violation"
-        : "Failed to flush database",
-      details: errorMessage,
-      suggestion: isFolderHierarchyError
-        ? "The error is related to folder hierarchy constraints. The updated implementation should handle this."
-        : undefined,
-      stack: process.env.NODE_ENV === "development" ? errorStack : undefined,
-      timestamp: new Date().toISOString(),
-    };
-
-    return NextResponse.json(errorResponse, { status: 500 });
+    console.error("Error flushing database:", error);
+    return NextResponse.json(
+      { status: "error", message: (error as Error).message },
+      { status: 500 }
+    );
   }
 }

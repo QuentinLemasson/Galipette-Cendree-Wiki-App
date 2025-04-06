@@ -1,4 +1,9 @@
 ---
+description: 
+globs: 
+alwaysApply: true
+---
+---
 description: Main/General Rule
 globs: 
 alwaysApply: true
