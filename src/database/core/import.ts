@@ -77,7 +77,7 @@ export class ImportManager {
       let filesDeleted = 0;
 
       // Run appropriate import method based on mode
-      if (config.mode === "full") {
+      if (config.mode === "full" && process.env.NODE_ENV !== "production") {
         this.logger.info("Running full import", "🌐");
         const result = await this.runFullImport(source);
         articlesImported = result.articlesCount;
@@ -91,13 +91,13 @@ export class ImportManager {
       }
 
       // Log import success
-      // await this.logImport(
-      //   importMetadata.commitHash,
-      //   articlesImported + filesDeleted,
-      //   "success",
-      //   null,
-      //   { importType: config.mode, sourceType: config.sourceType }
-      // );
+      await this.logImport(
+        importMetadata.commitHash,
+        articlesImported + filesDeleted,
+        "success",
+        null,
+        { importType: config.mode, sourceType: config.sourceType }
+      );
 
       this.logger.success(
         `Import completed successfully: ${articlesImported} articles, ${relationsCreated} relations, ${filesDeleted} deleted`
