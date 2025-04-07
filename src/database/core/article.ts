@@ -1,4 +1,4 @@
-import { Article, PrismaClient, Prisma } from "@prisma/client";
+import { Article, PrismaClient, Prisma, Folder } from "@prisma/client";
 import { prisma } from "./client";
 import { Logger } from "@/utils/logger/logger.utils";
 
@@ -31,7 +31,7 @@ export class ArticleManager {
     content: string,
     path: string,
     metadata: Record<string, unknown>,
-    folderId: number
+    folderId: number | null
   ): Promise<Article> {
     return this.prisma.article.upsert({
       where: { path },
@@ -139,16 +139,15 @@ export class ArticleManager {
 
   /**
    * Format an article path for consistency
+   * Remove the base path (vaultPath + wikiDirectory) from the filePath
    */
   formatArticlePath(filePath: string, basePath: string): string {
     // Remove base path if it exists
-    let formattedPath = filePath;
-    if (basePath && formattedPath.startsWith(basePath)) {
-      formattedPath = formattedPath.substring(basePath.length);
+    let formattedPath = filePath.replace(/\\/g, "/");
+    const formattedBasePath = basePath.replace(/\\/g, "/");
+    if (formattedBasePath && formattedPath.startsWith(formattedBasePath)) {
+      formattedPath = formattedPath.substring(formattedBasePath.length);
     }
-
-    // Convert backslashes to forward slashes
-    formattedPath = formattedPath.replace(/\\/g, "/");
 
     // Remove leading slash
     formattedPath = formattedPath.startsWith("/")
@@ -169,38 +168,54 @@ export class ArticleManager {
   async getOrCreateFolderHierarchy(
     folderPath: string,
     logger: Logger
-  ): Promise<number> {
-    // Root folder has ID 1
-    if (!folderPath) return 1;
+  ): Promise<number | null> {
+    // Root folder case (no path)
+    if (
+      !folderPath ||
+      folderPath === "" ||
+      folderPath === "/" ||
+      folderPath === "\\" ||
+      folderPath === "."
+    ) {
+      return null; // Return null to indicate no folder
+    }
 
     const parts = folderPath.split("/").filter(Boolean);
     let currentPath = "";
-    let parentId = 1; // Root folder ID
+    let parentId: number | null = null; // Start with null for top-level folders
 
     for (const part of parts) {
       currentPath = currentPath ? `${currentPath}/${part}` : part;
 
-      const folder = await this.prisma.folder.findFirst({
-        where: {
-          // Search by constructed path
-          AND: [{ name: part }, { parentId }],
-        },
-      });
-
-      if (folder) {
-        parentId = folder.id;
-      } else {
-        const newFolder = await this.prisma.folder.create({
-          data: {
-            name: part,
-            parentId,
+      try {
+        const folder: Folder | null = await this.prisma.folder.findFirst({
+          where: {
+            // Search by constructed path
+            AND: [{ name: part }, { parentId }],
           },
         });
-        logger.info(`Created folder: ${part}`, "📁");
-        parentId = newFolder.id;
+
+        if (folder) {
+          parentId = folder.id;
+        } else {
+          const newFolder: Folder = await this.prisma.folder.create({
+            data: {
+              name: part,
+              parentId, // Will be null for top-level folders
+            },
+          });
+          logger.info(`Created folder: ${part}`, "📁");
+          parentId = newFolder.id;
+        }
+      } catch (error) {
+        logger.error(
+          `Failed to process folder ${part}: ${error}`,
+          error as Error
+        );
+        throw error;
       }
     }
 
-    return parentId;
+    return parentId ?? 0; // Return parentId or 0 if null
   }
 }

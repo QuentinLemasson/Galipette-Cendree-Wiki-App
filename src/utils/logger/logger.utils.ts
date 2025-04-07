@@ -2,6 +2,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+type LogOptions = {
+  consolePrint?: boolean;
+  timestampPrint?: boolean;
+};
+
 export class Logger {
   private logStream: fs.WriteStream;
   private logPath: string;
@@ -25,12 +30,11 @@ export class Logger {
     this.logStream = fs.createWriteStream(this.logPath, { flags: "a" });
 
     // Write header with formatted timestamp
-    this.log("=".repeat(50), false);
-    this.log(
-      `${operation} started at: ${this.formatTimestamp(new Date())}`,
-      false
-    );
-    this.log("=".repeat(50) + "\n", false);
+    this.log("=".repeat(50), { consolePrint: false });
+    this.log(`${operation} started at: ${this.formatTimestamp(new Date())}`, {
+      consolePrint: false,
+    });
+    this.log("=".repeat(50) + "\n", { consolePrint: false });
   }
 
   private formatTimestamp(date: Date): string {
@@ -44,15 +48,23 @@ export class Logger {
     return `${day}/${month}/${year}-${hours}:${minutes}:${seconds}`;
   }
 
-  log(message: string, consolePrint: boolean = true) {
-    const timestamp = this.formatTimestamp(new Date());
-    const logMessage = `[${timestamp}] ${message}\n`;
+  log(
+    message: string,
+    options: LogOptions = { consolePrint: true, timestampPrint: true }
+  ) {
+    let logMessage = "";
+    if (options.timestampPrint) {
+      const timestamp = this.formatTimestamp(new Date());
+      logMessage = `[${timestamp}] ${message}\n`;
+    } else {
+      logMessage = `${message}\n`;
+    }
 
     // Write to file
     this.logStream.write(logMessage);
 
     // Also print to console
-    if (consolePrint) {
+    if (options.consolePrint) {
       console.log(message);
     }
   }
@@ -85,13 +97,20 @@ export class Logger {
     this.log(logMessage);
   }
 
+  section(message: string) {
+    this.log(
+      `\n<${"=".repeat(15)}${" ".repeat(5)}${message}${" ".repeat(5)}${"=".repeat(15)}>\n`,
+      { consolePrint: false }
+    );
+  }
+
   close() {
-    this.log("=".repeat(50), false);
+    this.log("=".repeat(50), { consolePrint: false });
     this.log(
       `${this.operation} finished at: ${this.formatTimestamp(new Date())}`,
-      false
+      { consolePrint: false }
     );
-    this.log("=".repeat(50) + "\n", false);
+    this.log("=".repeat(50) + "\n", { consolePrint: false });
     this.logStream.end();
   }
 }

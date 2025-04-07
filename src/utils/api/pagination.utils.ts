@@ -3,8 +3,8 @@ import { NextRequest } from "next/server";
 export interface PaginationParams {
   page: number; // The page number to retrieve
   pageSize: number; // The number of items per page
-  skip: number; // The number of items to skip
-  take: number; // The number of items to take
+  skip: number; // The number of items to skip => use for prisma query
+  take: number; // The number of items to take => use for prisma query
 }
 
 export function getPaginationParams(req: NextRequest): PaginationParams {

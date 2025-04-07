@@ -91,13 +91,13 @@ export class ImportManager {
       }
 
       // Log import success
-      await this.logImport(
-        importMetadata.commitHash,
-        articlesImported + filesDeleted,
-        "success",
-        null,
-        { importType: config.mode, sourceType: config.sourceType }
-      );
+      // await this.logImport(
+      //   importMetadata.commitHash,
+      //   articlesImported + filesDeleted,
+      //   "success",
+      //   null,
+      //   { importType: config.mode, sourceType: config.sourceType }
+      // );
 
       this.logger.success(
         `Import completed successfully: ${articlesImported} articles, ${relationsCreated} relations, ${filesDeleted} deleted`
@@ -238,7 +238,10 @@ export class ImportManager {
     files: ImportFile[]
   ): Promise<Map<string, Article>> {
     const articlesMap = new Map<string, Article>();
-    const vaultPath = process.env.VAULT_PATH || "";
+    const vaultPath =
+      (process.env.VAULT_PATH || "") + "/" + (process.env.WIKI_DIRECTORY || "");
+
+    this.logger.section("Start hierarchy processing - vaultPath: " + vaultPath);
 
     for (const file of files) {
       try {
@@ -247,6 +250,8 @@ export class ImportManager {
           file.path,
           vaultPath
         );
+
+        this.logger.info(`Processing article -> ${formattedPath}`);
 
         // Derive title from filename
         const fileName = path.basename(file.path);
