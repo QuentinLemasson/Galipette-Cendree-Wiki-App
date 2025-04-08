@@ -10,20 +10,21 @@ datasource db {
 }
 
 model Article {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  path      String   @unique
-  metadata  Json     @default("{}")
-  folderId  Int?     @map("folder_id")
-  folder    Folder?  @relation(fields: [folderId], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id              Int       @id @default(autoincrement())
+  title           String
+  content         String
+  path            String    @unique
+  metadata        Json      @default("{}")
+  folderId        Int?      @map("folder_id")
+  folder          Folder?   @relation(fields: [folderId], references: [id])
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
   // Relations
   relatedToArticles   ArticleRelation[] @relation("ArticleToRelated")
   relatedFromArticles ArticleRelation[] @relation("RelatedToArticle")
-  tags               ArticleTag[]
+  tags                ArticleTag[]
+  importMetadata      ImportMetadata?    @relation
 
   @@map("articles")
   @@index([path, title])
@@ -75,34 +76,44 @@ model Folder {
   @@index([parentId])
 }
 
-// TODO : refence the imported articles via foreign key
-// TODO : both should reference the same commit hash
+enum ImportStatus {
+  SUCCESS
+  FAILED
+  PENDING
+  PARTIAL
+}
+
 model ImportMetadata {
-  id          Int      @id @default(autoincrement())
-  filePath    String   @unique @map("file_path")
-  fileHash    String   @map("file_hash")
-  lastImport  DateTime @default(now()) @map("last_import")
-  importCount Int      @default(1) @map("import_count")
-  status      String   @default("success")
-  error       String?
-  metadata    Json     @default("{}")
-  commitHash  String?  @map("commit_hash")
-  gitStatus   String?  @map("git_status")
+  id          Int          @id @default(autoincrement())
+  articlePath String       @unique @map("file_path")
+  commitHash  String       @map("commit_hash")
+  importCount Int          @default(1) @map("import_count")
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  article     Article      @relation(fields: [articlePath], references: [path], onDelete: Cascade)
+  gitImport   GitImportLog? @relation(fields: [commitHash], references: [commitHash])
 
   @@map("import_metadata")
-  @@index([filePath, fileHash])
   @@index([commitHash])
 }
 
 model GitImportLog {
-  id            Int      @id @default(autoincrement())
-  commitHash    String   @unique @map("commit_hash")
-  importedAt    DateTime @default(now()) @map("imported_at")
-  status        String   @default("success")
+  id            Int              @id @default(autoincrement())
+  commitHash    String           @unique @map("commit_hash")
+  importedAt    DateTime         @default(now()) @map("imported_at")
   error         String?
-  filesChanged  Int      @default(0) @map("files_changed")
-  metadata      Json     @default("{}")
+  filesAdded    Int              @default(0) @map("files_added")
+  filesDeleted  Int              @default(0) @map("files_deleted")
+  filesModified Int              @default(0) @map("files_modified")
+  foldersAdded  Int              @default(0) @map("folders_added")
+  foldersDeleted Int             @default(0) @map("folders_deleted")
+  tagsAdded     Int              @default(0) @map("tags_added")
+  tagsDeleted   Int              @default(0) @map("tags_deleted")
+  metadata      Json             @default("{}")
+  status        ImportStatus     @default(SUCCESS)
+  imports       ImportMetadata[]
 
   @@map("git_import_logs")
   @@index([commitHash])
+  @@index([commitHash, status])
 } 
