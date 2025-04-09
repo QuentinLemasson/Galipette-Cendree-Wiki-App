@@ -3,8 +3,42 @@ import { prisma } from "./client";
 import { Logger } from "@/utils/logger/logger.utils";
 
 /**
- * Database manager to handle general database operations
+ * @fileoverview Database - Core database management service
+ *
+ * @description
+ * The Database class provides high-level abstractions for working with the database,
+ * primarily focused on initialization, status, health checks, and migrations.
+ *
+ * This class serves as a centralized point for database operations that don't fit
+ * into specific domain managers (like ArticleManager or ImportManager).
+ *
+ * @key_responsibilities
+ * - Database connection management
+ * - Health checks and status monitoring
+ * - Database initialization and teardown
+ * - Schema validation and maintenance
+ *
+ * @usage_example
+ * ```typescript
+ * const db = new Database();
+ *
+ * // Check if database is healthy
+ * const isHealthy = await db.healthCheck();
+ *
+ * // Get database status
+ * const status = await db.getDatabaseStatus();
+ * ```
+ *
+ * @methods
+ * - {@link DatabaseManager.getInstance} - Get singleton instance
+ * - {@link DatabaseManager.flushDatabase} - Flush the database
+ * - {@link DatabaseManager.flushArticles} - Flush all articles and related entities
+ *
+ * @note
+ * This class uses the singleton Prisma client from client.ts and provides
+ * higher-level abstractions for working with the database.
  */
+
 export class DatabaseManager {
   private static _instance: DatabaseManager;
   private prisma: PrismaClient;
@@ -112,6 +146,65 @@ export class DatabaseManager {
         error as Error
       );
       throw new Error(`Failed to flush database: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Flushes all articles from the database
+   * @returns Object containing the result of the operation
+   * @throws Error if there is an error flushing the articles
+   */
+  async flushArticles(): Promise<{
+    success: boolean;
+    message: string;
+    stats?: {
+      relations: number;
+      articleTags: number;
+      articles: number;
+      folders: number;
+      importMetadata: number;
+    };
+  }> {
+    try {
+      this.logger.info("Starting article flush operation...", "🗑️");
+
+      const deletedRelations = await this.prisma.articleRelation.deleteMany({});
+      const deletedArticleTags = await this.prisma.articleTag.deleteMany({});
+      const deletedFolders = await this.prisma.folder.deleteMany({});
+      const deletedImportMetadata = await this.prisma.importMetadata.deleteMany(
+        {}
+      );
+      const deletedArticles = await this.prisma.article.deleteMany({});
+
+      this.logger.success(`Article flush completed successfully:
+        - ${deletedArticles.count} articles
+        - ${deletedRelations.count} relations
+        - ${deletedArticleTags.count} article tags
+        - ${deletedFolders.count} folders
+        - ${deletedImportMetadata.count} import metadata`);
+
+      return {
+        success: true,
+        message: "Article flush completed successfully",
+        stats: {
+          articles: deletedArticles.count,
+          relations: deletedRelations.count,
+          articleTags: deletedArticleTags.count,
+          folders: deletedFolders.count,
+          importMetadata: deletedImportMetadata.count,
+        },
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `${error.name}: ${error.message}`
+          : String(error);
+
+      this.logger.error(
+        `Failed to flush articles: ${errorMessage}`,
+        error as Error
+      );
+      throw new Error(`Failed to flush articles: ${errorMessage}`);
     }
   }
 }

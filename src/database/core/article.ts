@@ -3,8 +3,48 @@ import { prisma } from "./client";
 import { Logger } from "@/utils/logger/logger.utils";
 
 /**
- * Core article management class with standardized article operations
+ * @fileoverview ArticleManager - Core article management service
+ *
+ * @description
+ * The ArticleManager is a singleton service that handles all article-related operations in the wiki system.
+ * It provides methods for creating, updating, deleting, and querying articles and their relationships.
+ *
+ * @key_responsibilities
+ * - Article CRUD operations with metadata management
+ * - Content and preview generation
+ * - File path standardization
+ * - Article relation management
+ * - Folder hierarchy creation
+ *
+ * @usage_example
+ * ```typescript
+ * const articleManager = ArticleManager.getInstance();
+ *
+ * // Create or update an article
+ * const article = await articleManager.upsertArticle(
+ *   'My Article',
+ *   '# Content here',
+ *   'folder/my-article',
+ *   { tags: ['wiki'] },
+ *   folderId
+ * );
+ *
+ * // Delete an article
+ * await articleManager.deleteArticle('folder/my-article');
+ * ```
+ *
+ * @methods
+ * - {@link ArticleManager.getInstance} - Get singleton instance
+ * - {@link ArticleManager.upsertArticle} - Create or update an article
+ * - {@link ArticleManager.deleteArticle} - Delete an article and its relationships
+ * - {@link ArticleManager.createRelations} - Parse and create article relationships
+ * - {@link ArticleManager.formatArticlePath} - Standardize article paths
+ * - {@link ArticleManager.getOrCreateFolderHierarchy} - Create folder structure
+ * - {@link ArticleManager.generatePreview} - Generate article preview text
+ *
+ * @note All operations use transactions where necessary to ensure database consistency.
  */
+
 export class ArticleManager {
   private static _instance: ArticleManager;
   private prisma: PrismaClient;
@@ -24,6 +64,43 @@ export class ArticleManager {
   }
 
   /**
+   * Generate a preview from article content
+   * Removes markdown formatting and truncates to specified length
+   */
+  private generatePreview(content: string, maxLength: number = 500): string {
+    // Remove markdown formatting for cleaner preview
+    const cleanContent = content
+      .replace(/^#+ /gm, "") // Remove headings
+      .replace(/\*\*(.+?)\*\*/g, "$1") // Remove bold
+      .replace(/\*(.+?)\*/g, "$1") // Remove italic
+      .replace(/`(.+?)`/g, "$1") // Remove inline code
+      .replace(/```[\s\S]*?```/g, "") // Remove code blocks
+      .replace(/\[\[([^\]]+)\]\]/g, "$1") // Convert wiki links to text
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Convert markdown links to text
+      .trim();
+
+    // Return truncated preview
+    if (cleanContent.length <= maxLength) {
+      return cleanContent;
+    }
+
+    // Try to cut at a sentence or paragraph
+    const truncated = cleanContent.substring(0, maxLength);
+    const lastPeriod = truncated.lastIndexOf(".");
+    const lastNewline = truncated.lastIndexOf("\n");
+
+    // Prefer cutting at a sentence, then at a paragraph, then at maxLength
+    const cutPoint =
+      lastPeriod > maxLength * 0.7
+        ? lastPeriod + 1
+        : lastNewline > maxLength * 0.7
+          ? lastNewline + 1
+          : maxLength;
+
+    return cleanContent.substring(0, cutPoint) + "...";
+  }
+
+  /**
    * Upsert an article with metadata
    */
   async upsertArticle(
@@ -33,22 +110,41 @@ export class ArticleManager {
     metadata: Record<string, unknown>,
     folderId: number | null
   ): Promise<Article> {
-    return this.prisma.article.upsert({
-      where: { path },
-      update: {
-        title,
-        content,
-        metadata: metadata as Prisma.InputJsonValue,
-        folderId,
-        updatedAt: new Date(),
-      },
-      create: {
-        title,
-        content,
-        path,
-        metadata: metadata as Prisma.InputJsonValue,
-        folderId,
-      },
+    // Generate preview
+    const preview = this.generatePreview(content);
+
+    // Use transaction to ensure both operations complete
+    return this.prisma.$transaction(async tx => {
+      // Create or update article
+      const article = await tx.article.upsert({
+        where: { path },
+        update: {
+          title,
+          preview,
+          metadata: metadata as Prisma.InputJsonValue,
+          folderId,
+          updatedAt: new Date(),
+        },
+        create: {
+          title,
+          preview,
+          path,
+          metadata: metadata as Prisma.InputJsonValue,
+          folderId,
+        },
+      });
+
+      // Create or update article content
+      await tx.articleContent.upsert({
+        where: { articleId: article.id },
+        update: { content },
+        create: {
+          content,
+          articleId: article.id,
+        },
+      });
+
+      return article;
     });
   }
 
@@ -56,16 +152,46 @@ export class ArticleManager {
    * Delete an article by path
    */
   async deleteArticle(path: string): Promise<void> {
-    // First delete relations
-    await this.prisma.articleRelation.deleteMany({
-      where: {
-        OR: [{ articlePath: path }, { relatedArticlePath: path }],
-      },
+    // First find the article to get its ID
+    const article = await this.prisma.article.findUnique({
+      where: { path },
+      select: { id: true },
     });
 
-    // Then delete the article
-    await this.prisma.article.delete({
-      where: { path },
+    if (!article) {
+      throw new Error(`Article to delete not found: ${path}`);
+    }
+
+    // Use a transaction to ensure all related data is deleted consistently
+    await this.prisma.$transaction(async tx => {
+      // Delete relations (the cascade will handle this, but we delete explicitly for clarity)
+      await tx.articleRelation.deleteMany({
+        where: {
+          OR: [{ articleFromId: article.id }, { articleToId: article.id }],
+        },
+      });
+
+      // Delete article tags
+      await tx.articleTag.deleteMany({
+        where: { articleId: article.id },
+      });
+
+      // Delete article content
+      // Note: This is actually handled by the cascade delete,
+      // but we're explicit here for clarity
+      await tx.articleContent.deleteMany({
+        where: { articleId: article.id },
+      });
+
+      // Delete import metadata
+      await tx.importMetadata.deleteMany({
+        where: { articleId: article.id },
+      });
+
+      // Finally delete the article itself
+      await tx.article.delete({
+        where: { id: article.id },
+      });
     });
   }
 
@@ -86,7 +212,18 @@ export class ArticleManager {
     );
 
     for (const [articlePath, article] of articlesMap.entries()) {
-      const rawRelations = article.content.match(/\[\[([^\]]+)\]\]/g) || [];
+      // Get the article content
+      const articleContent = await this.prisma.articleContent.findUnique({
+        where: { articleId: article.id },
+      });
+
+      if (!articleContent) {
+        logger.warn(`No content found for article: ${articlePath}`);
+        continue;
+      }
+
+      const rawRelations =
+        articleContent.content.match(/\[\[([^\]]+)\]\]/g) || [];
 
       for (const link of rawRelations) {
         const linkTexts = link.slice(2, -2).trim().split("|");
@@ -107,17 +244,25 @@ export class ArticleManager {
 
         if (relatedPath && articlesMap.has(relatedPath)) {
           try {
+            const relatedArticle = articlesMap.get(relatedPath);
+
+            // Skip if can't find the article (shouldn't happen)
+            if (!relatedArticle) {
+              logger.warn(`Related article not found for path: ${relatedPath}`);
+              continue;
+            }
+
             await this.prisma.articleRelation.upsert({
               where: {
-                articlePath_relatedArticlePath: {
-                  articlePath: articlePath,
-                  relatedArticlePath: relatedPath,
+                articleFromId_articleToId: {
+                  articleFromId: article.id,
+                  articleToId: relatedArticle.id,
                 },
               },
               update: {},
               create: {
-                articlePath: articlePath,
-                relatedArticlePath: relatedPath,
+                articleFromId: article.id,
+                articleToId: relatedArticle.id,
               },
             });
             logger.info(

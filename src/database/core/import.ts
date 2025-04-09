@@ -1,4 +1,10 @@
-import { PrismaClient, Article, Prisma } from "@prisma/client";
+import {
+  PrismaClient,
+  Article,
+  Prisma,
+  ImportStatus,
+  GitImportLog,
+} from "@prisma/client";
 import { prisma } from "./client";
 import { Logger } from "@/utils/logger/logger.utils";
 import { ArticleManager } from "./article";
@@ -10,6 +16,49 @@ import {
 } from "../types/import.types";
 import path from "path";
 import { createHash } from "crypto";
+
+/**
+ * @fileoverview ImportManager - Core import system for wiki content
+ *
+ * @description
+ * The ImportManager is a singleton service responsible for importing content into the wiki system.
+ * It handles various import sources (Git, filesystem, API) and tracks import history.
+ *
+ * @key_responsibilities
+ * - Importing content from various sources
+ * - Tracking import history and metadata
+ * - Handling full and incremental (diff) imports
+ * - Managing file hashing and change detection
+ * - Coordinating article and relation creation/updates
+ *
+ * @usage_example
+ * ```typescript
+ * const importManager = ImportManager.getInstance();
+ *
+ * // Configure an import source
+ * const gitSource = new GitImportSource({ repo: '...' });
+ *
+ * // Run an import
+ * const result = await importManager.import(gitSource, {
+ *   mode: 'diff',
+ *   sourceType: 'git'
+ * });
+ * ```
+ *
+ * @methods
+ * - {@link ImportManager.getInstance} - Get singleton instance
+ * - {@link ImportManager.import} - Run a content import operation
+ * - {@link ImportManager.runFullImport} - Perform a complete import (all files)
+ * - {@link ImportManager.runDiffImport} - Perform an incremental import (changed files only)
+ * - {@link ImportManager.processFiles} - Process a batch of files into articles
+ * - {@link ImportManager.updateImportMetadata} - Track file import metadata
+ * - {@link ImportManager.logImport} - Log import operations
+ * - {@link ImportManager.getLastImport} - Retrieve the most recent import
+ *
+ * @note
+ * The import system uses transactions to ensure database consistency and maintains
+ * a comprehensive history of all import operations for audit and recovery purposes.
+ */
 
 /**
  * Calculate a hash for content
@@ -280,8 +329,7 @@ export class ImportManager {
         await this.updateImportMetadata(
           formattedPath,
           calculateFileHash(file.content),
-          file.metadata.commitHash,
-          changedFileStatus(file.path, file.metadata)
+          file.metadata.commitHash
         );
 
         articlesMap.set(formattedPath, article);
@@ -302,18 +350,38 @@ export class ImportManager {
    */
   private async logImport(
     commitHash: string,
-    filesChanged: number,
-    status: string = "success",
+    filesCount: number,
+    status: string,
     error: string | null = null,
     metadata: Record<string, unknown> = {}
   ): Promise<void> {
     this.logger.info("Logging import info", "🔍");
+
+    // Convert string status to enum
+    const importStatus =
+      status === "success"
+        ? ImportStatus.SUCCESS
+        : status === "error"
+          ? ImportStatus.FAILED
+          : ImportStatus.PARTIAL;
+
+    // Determine file counts based on metadata
+    const filesAdded = (metadata.filesAdded as number) || 0;
+    const filesDeleted = (metadata.filesDeleted as number) || 0;
+    const filesModified = (metadata.filesModified as number) || 0;
+
     await this.prisma.gitImportLog.create({
       data: {
         commitHash,
-        status,
+        status: importStatus,
         error,
-        filesChanged,
+        filesAdded,
+        filesDeleted,
+        filesModified,
+        foldersAdded: 0,
+        foldersDeleted: 0,
+        tagsAdded: 0,
+        tagsDeleted: 0,
         metadata: metadata as Prisma.InputJsonValue,
       },
     });
@@ -326,33 +394,34 @@ export class ImportManager {
   private async updateImportMetadata(
     filePath: string,
     fileHash: string,
-    commitHash: string,
-    gitStatus: string,
-    error: string | null = null,
-    metadata: Record<string, unknown> = {}
+    commitHash: string
   ): Promise<void> {
+    // First, find the article by path to get its ID
+    // TODO : ensure it works in the case of the newly added (created) article
+    const article = await this.prisma.article.findUnique({
+      where: { path: filePath },
+      select: { id: true },
+    });
+
+    if (!article) {
+      this.logger.warn(
+        `Cannot update import metadata: No article found for path ${filePath}`
+      );
+      return;
+    }
+
     await this.prisma.importMetadata.upsert({
       where: {
-        filePath,
+        articleId: article.id,
       },
       update: {
-        fileHash,
         commitHash,
-        gitStatus,
-        lastImport: new Date(),
         importCount: { increment: 1 },
-        error,
-        metadata: metadata as Prisma.InputJsonValue,
       },
       create: {
-        filePath,
-        fileHash,
+        articleId: article.id,
         commitHash,
-        gitStatus,
-        lastImport: new Date(),
         importCount: 1,
-        error,
-        metadata: metadata as Prisma.InputJsonValue,
       },
     });
   }
@@ -360,33 +429,18 @@ export class ImportManager {
   /**
    * Get the last import record
    */
-  async getLastImport(): Promise<{
-    commitHash: string;
-    importedAt: Date;
-    status: string;
-    error: string | null;
-    filesChanged: number;
-  } | null> {
+  async getLastImport(): Promise<GitImportLog | null> {
     try {
-      return await this.prisma.gitImportLog.findFirst({
+      const lastImport = await this.prisma.gitImportLog.findFirst({
         orderBy: {
           importedAt: "desc",
         },
       });
+
+      return lastImport;
     } catch (error) {
       this.logger.error("Error getting last import:", error as Error);
       return null;
     }
   }
-}
-
-/**
- * Determine file status from metadata
- */
-function changedFileStatus(
-  filePath: string,
-  metadata: Record<string, unknown>
-): string {
-  if (metadata.status) return metadata.status as string;
-  return "modified"; // Default status
 }

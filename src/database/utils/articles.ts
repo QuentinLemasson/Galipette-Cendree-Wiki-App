@@ -2,6 +2,29 @@ import { prisma } from "@/lib/prisma";
 import { Article } from "@/database/types/db.types";
 
 /**
+ * @fileoverview Database utility functions for article operations
+ *
+ * @description
+ * This file contains utility functions for interacting with articles in the database.
+ * It provides methods for retrieving, searching, and managing articles and their relationships.
+ * The functions handle the complex data structure of articles, including their content,
+ * metadata, relations, and folder organization.
+ *
+ * @methods
+ * - {@link getArticlePaths} - Retrieves all article paths from the database
+ * - {@link getArticleByPath} - Retrieves an article by its path with related articles
+ * - {@link searchArticles} - Searches for articles containing the query in title or content
+ * - {@link getRelatedArticlesByTags} - Finds articles that share tags with the specified article
+ * - {@link getFolderTree} - Retrieves the folder structure with articles
+ *
+ * @notes
+ * - Articles are stored with their content in a separate ArticleContent table
+ * - Article relations are bidirectional and stored in the ArticleRelation table
+ * - Articles can be organized in a folder hierarchy
+ * - Search is case-insensitive and limited to 10 results
+ */
+
+/**
  * Retrieves all article paths from the database in alphabetical order
  * @returns Promise containing an array of objects with article paths
  * @throws {Error} If there is an error fetching the paths from the database
@@ -43,10 +66,10 @@ export async function getArticleByPath(path: string): Promise<Article | null> {
       include: {
         relatedToArticles: {
           select: {
-            relatedArticle: {
+            articleTo: {
               select: {
                 title: true,
-                content: true,
+                preview: true,
                 path: true,
                 metadata: true,
               },
@@ -55,31 +78,34 @@ export async function getArticleByPath(path: string): Promise<Article | null> {
         },
         relatedFromArticles: {
           select: {
-            article: {
+            articleFrom: {
               select: {
                 title: true,
-                content: true,
+                preview: true,
                 path: true,
                 metadata: true,
               },
             },
           },
         },
+        content: true,
       },
     });
 
     if (!article) return null;
 
     return {
+      id: article.id,
       title: article.title,
-      content: article.content,
+      preview: article.preview,
       path: article.path,
+      content: article.content?.content || null,
       metadata: article.metadata as Record<string, unknown>,
       related_articles: article.relatedToArticles.map(
-        rel => rel.relatedArticle
+        rel => rel.articleTo
       ) as Article[],
       mention_articles: article.relatedFromArticles.map(
-        rel => rel.article
+        rel => rel.articleFrom
       ) as Article[],
     };
   } catch (error) {
@@ -100,7 +126,11 @@ export async function searchArticles(query: string): Promise<Article[]> {
       where: {
         OR: [
           { title: { contains: query, mode: "insensitive" } },
-          { content: { contains: query, mode: "insensitive" } },
+          {
+            content: {
+              content: { contains: query, mode: "insensitive" },
+            },
+          },
         ],
       },
       include: {
@@ -109,10 +139,22 @@ export async function searchArticles(query: string): Promise<Article[]> {
             tag: true,
           },
         },
+        content: true,
       },
       take: 10,
     });
-    return articles as unknown as Article[];
+
+    return articles.map(article => ({
+      id: article.id,
+      title: article.title,
+      preview: article.preview,
+      path: article.path,
+      content: article.content?.content || null,
+      metadata: article.metadata as Record<string, unknown>,
+      related_articles: [],
+      mention_articles: [],
+      tags: article.tags,
+    }));
   } catch (error) {
     console.error("Error searching articles:", error);
     throw error;

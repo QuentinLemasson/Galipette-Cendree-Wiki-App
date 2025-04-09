@@ -7,43 +7,59 @@ import {
 import { Logger } from "@/utils/logger/logger.utils";
 import { formatArticlePath } from "../utils/markdown.utils";
 import axios from "axios";
+import { GitHubWebhookPayload } from "../types/webhook.types";
 
 /**
- * Type for the webhook payload from GitHub
+ * @fileoverview WebhookAdapter - GitHub webhook import source adapter
+ *
+ * @description
+ * The WebhookAdapter implements the ImportSource interface to process GitHub webhook
+ * payloads for importing content changes into the wiki system. It handles authentication,
+ * file fetching, and change detection from GitHub's webhook events.
+ *
+ * @key_responsibilities
+ * - Process GitHub webhook payloads
+ * - Extract commit information and file changes
+ * - Fetch content of changed files from GitHub API
+ * - Format paths and prepare files for import
+ * - Track metadata from GitHub webhook events
+ *
+ * @usage_example
+ * ```typescript
+ * // Create adapter from webhook payload
+ * const adapter = new WebhookAdapter(
+ *   webhookPayload,
+ *   'docs', // Optional wiki subdirectory
+ *   process.env.GITHUB_TOKEN // Optional auth token
+ * );
+ *
+ * // Get files that were changed
+ * const changedFiles = await adapter.getChangedFiles();
+ * console.log(`Added: ${changedFiles.added.length}, Modified: ${changedFiles.modified.length}`);
+ *
+ * // Get all files for import
+ * const files = await adapter.getFiles();
+ * ```
+ *
+ * @implements {ImportSource}
+ *
+ * @methods
+ * - {@link WebhookAdapter.constructor} - Create a new adapter instance
+ * - {@link WebhookAdapter.getFiles} - Get all files from the webhook event
+ * - {@link WebhookAdapter.getChangedFiles} - Get added/modified/deleted files
+ * - {@link WebhookAdapter.getMetadata} - Get import metadata from webhook
+ *
+ * @private_methods
+ * - {@link WebhookAdapter.validatePayload} - Ensure webhook payload is valid
+ * - {@link WebhookAdapter.getRepositoryInfo} - Extract repo owner and name
+ * - {@link WebhookAdapter.fetchFileContent} - Get file content from GitHub API
+ * - {@link WebhookAdapter.getChangedFilesFromPayload} - Parse changed files from commits
+ *
+ * @note
+ * Requires appropriate GitHub API access if token is provided.
+ * Rate limits may apply when accessing GitHub API.
  */
-interface GitHubWebhookPayload {
-  repository?: {
-    full_name?: string;
-    html_url?: string;
-    owner?: {
-      name?: string;
-      login?: string;
-    };
-    name?: string;
-  };
-  ref?: string;
-  after?: string;
-  before?: string;
-  commits?: Array<{
-    id?: string;
-    message?: string;
-    timestamp?: string;
-    author?: {
-      name?: string;
-      email?: string;
-    };
-    added?: string[];
-    modified?: string[];
-    removed?: string[];
-  }>;
-  sender?: {
-    login?: string;
-  };
-}
 
-/**
- * Webhook adapter for GitHub webhooks
- */
 export class WebhookAdapter implements ImportSource {
   private logger: Logger;
   private payload: GitHubWebhookPayload;

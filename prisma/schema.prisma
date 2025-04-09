@@ -12,7 +12,7 @@ datasource db {
 model Article {
   id              Int       @id @default(autoincrement())
   title           String
-  content         String
+  preview         String?   @db.VarChar(500)
   path            String    @unique
   metadata        Json      @default("{}")
   folderId        Int?      @map("folder_id")
@@ -24,24 +24,34 @@ model Article {
   relatedToArticles   ArticleRelation[] @relation("ArticleToRelated")
   relatedFromArticles ArticleRelation[] @relation("RelatedToArticle")
   tags                ArticleTag[]
-  importMetadata      ImportMetadata?    @relation
+  importMetadata      ImportMetadata?
+  content             ArticleContent?
 
   @@map("articles")
   @@index([path, title])
   @@index([folderId])
 }
 
-model ArticleRelation {
-  id                  Int      @id @default(autoincrement())
-  articlePath         String   @map("article_path")
-  relatedArticlePath  String   @map("related_article_path")
-  
-  article             Article  @relation("ArticleToRelated", fields: [articlePath], references: [path], onDelete: Cascade)
-  relatedArticle      Article  @relation("RelatedToArticle", fields: [relatedArticlePath], references: [path], onDelete: Cascade)
+model ArticleContent {
+  id          Int     @id @default(autoincrement())
+  content     String  @db.Text
+  articleId   Int     @unique @map("article_id")
+  article     Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
-  @@unique([articlePath, relatedArticlePath])
-  @@index([articlePath])
-  @@index([relatedArticlePath])
+  @@map("article_contents")
+} 
+
+model ArticleRelation {
+  id          Int      @id @default(autoincrement())
+  articleFromId   Int      @map("article_from_id")
+  articleToId   Int      @map("article_to_id")
+  
+  articleFrom     Article  @relation("ArticleToRelated", fields: [articleFromId], references: [id], onDelete: Cascade)
+  articleTo     Article  @relation("RelatedToArticle", fields: [articleToId], references: [id], onDelete: Cascade)
+
+  @@unique([articleFromId, articleToId])
+  @@index([articleFromId])
+  @@index([articleToId])
   @@map("article_relations")
 }
 
@@ -54,13 +64,14 @@ model Tag {
 }
 
 model ArticleTag {
-  articlePath  String   @map("article_path")
+  articleId   Int      @map("article_id")
   tagId       Int      @map("tag_id")
-  article     Article  @relation(fields: [articlePath], references: [path], onDelete: Cascade)
+  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   tag         Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
-  @@id([articlePath, tagId])
+  @@id([articleId, tagId])
   @@index([tagId])
+  @@index([articleId])
   @@map("article_tags")
 }
 
@@ -85,16 +96,17 @@ enum ImportStatus {
 
 model ImportMetadata {
   id          Int          @id @default(autoincrement())
-  articlePath String       @unique @map("file_path")
+  articleId   Int          @unique @map("article_id")
   commitHash  String       @map("commit_hash")
   importCount Int          @default(1) @map("import_count")
   createdAt   DateTime     @default(now()) @map("created_at")
 
-  article     Article      @relation(fields: [articlePath], references: [path], onDelete: Cascade)
+  article     Article      @relation(fields: [articleId], references: [id], onDelete: Cascade)
   gitImport   GitImportLog? @relation(fields: [commitHash], references: [commitHash])
 
   @@map("import_metadata")
   @@index([commitHash])
+  @@index([articleId])
 }
 
 model GitImportLog {
@@ -116,4 +128,5 @@ model GitImportLog {
   @@map("git_import_logs")
   @@index([commitHash])
   @@index([commitHash, status])
-} 
+}
+

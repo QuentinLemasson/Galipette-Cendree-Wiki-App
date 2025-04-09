@@ -12,8 +12,56 @@ import { formatArticlePath } from "../utils/markdown.utils";
 import { prisma } from "../core/client";
 
 /**
- * Local Git repository adapter implementing the ImportSource interface
+ * @fileoverview LocalGitAdapter - Local Git repository import source
+ *
+ * @description
+ * The LocalGitAdapter implements the ImportSource interface to process content from
+ * a local Git repository. It tracks changes between commits, reads files from the
+ * filesystem, and prepares them for import into the wiki system.
+ *
+ * @key_responsibilities
+ * - Connect to a local Git repository
+ * - Detect changes between commits (additions, modifications, deletions)
+ * - Read file content from the filesystem
+ * - Track import metadata including commit hashes
+ * - Support incremental (diff-based) imports
+ *
+ * @usage_example
+ * ```typescript
+ * // Create adapter for local Git repository
+ * const adapter = new LocalGitAdapter(
+ *   '/path/to/repo',
+ *   'main', // branch name
+ *   'content/wiki' // Optional wiki subdirectory
+ * );
+ *
+ * // Get files that changed since last import
+ * const changedFiles = await adapter.getChangedFiles();
+ *
+ * // Get all files for import
+ * const files = await adapter.getFiles();
+ * ```
+ *
+ * @implements {ImportSource}
+ *
+ * @methods
+ * - {@link LocalGitAdapter.constructor} - Create a new adapter instance
+ * - {@link LocalGitAdapter.getFiles} - Get all markdown files from the repository
+ * - {@link LocalGitAdapter.getChangedFiles} - Get files that changed since last import
+ * - {@link LocalGitAdapter.getMetadata} - Get import metadata with commit information
+ *
+ * @private_methods
+ * - {@link LocalGitAdapter.validateRepository} - Ensure the Git repository is valid
+ * - {@link LocalGitAdapter.getCurrentCommitHash} - Get the current HEAD commit hash
+ * - {@link LocalGitAdapter.getLastImportedCommit} - Find the last successfully imported commit
+ * - {@link LocalGitAdapter.collectMarkdownFiles} - Gather all markdown files recursively
+ * - {@link LocalGitAdapter.getDiffBetweenCommits} - Find changes between two commits
+ *
+ * @note
+ * Requires Git to be installed and accessible via command line.
+ * The repository must be a valid Git repository with the specified branch.
  */
+
 export class LocalGitAdapter implements ImportSource {
   private logger: Logger;
   private repoPath: string;
@@ -89,7 +137,7 @@ export class LocalGitAdapter implements ImportSource {
   private async getLastImportedCommit(): Promise<string | null> {
     const lastImport = await prisma.gitImportLog.findFirst({
       where: {
-        status: "success",
+        status: "SUCCESS",
       },
       orderBy: {
         importedAt: "desc",

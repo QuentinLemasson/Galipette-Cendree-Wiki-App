@@ -1,8 +1,10 @@
 import { ArticleTag } from "@prisma/client";
 
 export interface Article {
+  id: number;
   title: string;
-  content: string;
+  preview?: string | null;
+  content?: string | null;
   path: string;
   metadata: Record<string, unknown>;
   folder_id?: number;

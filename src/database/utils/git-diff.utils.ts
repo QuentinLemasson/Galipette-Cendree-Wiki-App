@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { PrismaClient } from "@prisma/client";
+import { ImportStatus, PrismaClient } from "@prisma/client";
 import path from "path";
 import {
   GitDiffResult,
@@ -8,10 +8,36 @@ import {
 } from "../types/git-diff.types";
 import { prisma } from "../operations/importOperations";
 import { Logger } from "@/utils/logger/logger.utils";
-import { extractMetadata, formatArticlePath } from "./markdown.utils";
+import { formatArticlePath } from "./markdown.utils";
 import { insertArticles, insertRelations } from "./database.utils";
-import fs from "fs";
-import { createHash } from "crypto";
+
+/**
+ * @fileoverview Git integration utilities for tracking and importing content changes
+ *
+ * @description
+ * This file provides utilities for tracking changes in Git repositories and
+ * importing those changes into the database. It handles the detection of
+ * modified, added, and deleted files, and processes them accordingly.
+ * The functions support both full and incremental imports, with proper
+ * tracking of import history and metadata.
+ *
+ * @methods
+ * - {@link getLastImportedCommit} - Gets the last imported commit hash
+ * - {@link getCurrentCommitHash} - Gets the current commit hash of the repository
+ * - {@link getChangedFiles} - Gets changed files between commits
+ * - {@link logGitImport} - Logs import operations
+ * - {@link updateImportMetadata} - Updates import metadata for articles
+ * - {@link shouldProcessFile} - Checks if a file should be processed
+ * - {@link processMarkdownFile} - Processes a single markdown file
+ * - {@link deleteArticle} - Deletes an article and its related data
+ *
+ * @notes
+ * - Supports tracking of file additions, modifications, and deletions
+ * - Maintains import history with detailed statistics
+ * - Uses transactions to ensure data consistency
+ * - Handles both local Git repositories and webhook-based imports
+ * - Properly manages article content in the separate ArticleContent table
+ */
 
 /**
  * Get the last imported commit hash from the database
@@ -23,7 +49,7 @@ export async function getLastImportedCommit(
 ): Promise<string | null> {
   const lastImport = await prisma.gitImportLog.findFirst({
     where: {
-      status: "success",
+      status: "SUCCESS",
     },
     orderBy: {
       importedAt: "desc",
@@ -145,8 +171,16 @@ export function getChangedFiles(
 export async function logGitImport(
   prisma: PrismaClient,
   commitHash: string,
-  filesChanged: number,
-  status: string = "success",
+  changes: {
+    filesAdded: number;
+    filesModified: number;
+    filesDeleted: number;
+    foldersAdded: number;
+    foldersDeleted: number;
+    tagsAdded: number;
+    tagsDeleted: number;
+  },
+  status: ImportStatus = "SUCCESS",
   error: string | null = null,
   metadata: GitImportMetadata = {}
 ): Promise<void> {
@@ -155,7 +189,13 @@ export async function logGitImport(
       commitHash,
       status,
       error,
-      filesChanged,
+      filesAdded: changes.filesAdded,
+      filesModified: changes.filesModified,
+      filesDeleted: changes.filesDeleted,
+      foldersAdded: changes.foldersAdded,
+      foldersDeleted: changes.foldersDeleted,
+      tagsAdded: changes.tagsAdded,
+      tagsDeleted: changes.tagsDeleted,
       metadata: JSON.stringify(metadata),
     },
   });
@@ -164,43 +204,26 @@ export async function logGitImport(
 /**
  * Update import metadata for processed files
  * @param prisma - Prisma client instance
- * @param filePath - File path
- * @param fileHash - File hash
+ * @param articleId - Article ID
  * @param commitHash - Commit hash
- * @param gitStatus - Git status
- * @param error - Error message
  */
 export async function updateImportMetadata(
   prisma: PrismaClient,
-  filePath: string,
-  fileHash: string,
-  commitHash: string,
-  gitStatus: string,
-  error: string | null = null,
-  metadata: GitImportMetadata = {}
+  articleId: number,
+  commitHash: string
 ): Promise<void> {
   await prisma.importMetadata.upsert({
     where: {
-      filePath,
+      articleId,
     },
     update: {
-      fileHash,
       commitHash,
-      gitStatus,
-      lastImport: new Date(),
       importCount: { increment: 1 },
-      error,
-      metadata: JSON.stringify(metadata),
     },
     create: {
-      filePath,
-      fileHash,
+      articleId,
       commitHash,
-      gitStatus,
-      lastImport: new Date(),
       importCount: 1,
-      error,
-      metadata: JSON.stringify(metadata),
     },
   });
 }
@@ -216,13 +239,6 @@ export function shouldProcessFile(filePath: string): boolean {
 }
 
 /**
- * Calculate MD5 hash of a file's content
- */
-function calculateFileHash(content: string): string {
-  return createHash("md5").update(content).digest("hex");
-}
-
-/**
  * Process a single markdown file
  */
 export async function processMarkdownFile(
@@ -232,9 +248,8 @@ export async function processMarkdownFile(
   logger: Logger
 ) {
   try {
-    const fileContent = fs.readFileSync(filePath, "utf8");
-    const fileHash = calculateFileHash(fileContent);
-    const { metadata } = extractMetadata(fileContent, logger);
+    // const fileContent = fs.readFileSync(filePath, "utf8");
+    // const { metadata } = extractMetadata(fileContent, logger);
     const formattedPath = formatArticlePath(filePath, vaultPath);
 
     // Process the file within a transaction
@@ -248,30 +263,32 @@ export async function processMarkdownFile(
 
       if (articlesMap.size > 0) {
         await insertRelations(tx as PrismaClient, articlesMap, logger);
-        await updateImportMetadata(
-          tx as PrismaClient,
-          formattedPath,
-          fileHash,
-          commitHash,
-          "modified",
-          null,
-          { importType: "diff", ...metadata }
-        );
+
+        // Get the article ID from the map
+        const article = articlesMap.get(formattedPath);
+        if (article) {
+          await updateImportMetadata(
+            tx as PrismaClient,
+            article.id,
+            commitHash
+          );
+        }
       }
     });
 
     logger.success(`Processed file: ${formattedPath}`);
   } catch (error) {
     logger.error(`Error processing file ${filePath}:`, error as Error);
-    await updateImportMetadata(
-      prisma,
-      formatArticlePath(filePath, vaultPath),
-      "",
-      commitHash,
-      "error",
-      (error as Error).message,
-      { importType: "diff" }
-    );
+
+    // Find the article by path to get its ID
+    const article = await prisma.article.findUnique({
+      where: { path: formatArticlePath(filePath, vaultPath) },
+    });
+
+    if (article) {
+      await updateImportMetadata(prisma, article.id, commitHash);
+    }
+
     throw error;
   }
 }
@@ -285,30 +302,50 @@ export async function deleteArticle(
   logger: Logger
 ) {
   try {
-    await prisma.article.delete({
+    // First find the article to get its ID
+    const article = await prisma.article.findUnique({
       where: { path: filePath },
+      select: { id: true },
     });
-    await updateImportMetadata(
-      prisma,
-      filePath,
-      "",
-      commitHash,
-      "deleted",
-      null,
-      { importType: "diff", deletedAt: new Date().toISOString() }
-    );
+
+    if (!article) {
+      logger.warn(`Article to delete not found: ${filePath}`);
+      return;
+    }
+
+    // Use a transaction to ensure all related data is deleted consistently
+    await prisma.$transaction(async tx => {
+      // Delete relations (the cascade will handle this, but we delete explicitly for clarity)
+      await tx.articleRelation.deleteMany({
+        where: {
+          OR: [{ articleFromId: article.id }, { articleToId: article.id }],
+        },
+      });
+
+      // Delete article tags
+      await tx.articleTag.deleteMany({
+        where: { articleId: article.id },
+      });
+
+      // Delete article content
+      await tx.articleContent.deleteMany({
+        where: { articleId: article.id },
+      });
+
+      // Delete import metadata
+      await tx.importMetadata.deleteMany({
+        where: { articleId: article.id },
+      });
+
+      // Finally delete the article itself
+      await tx.article.delete({
+        where: { id: article.id },
+      });
+    });
+
     logger.success(`Deleted article: ${filePath}`);
   } catch (error) {
     logger.error(`Error deleting article ${filePath}:`, error as Error);
-    await updateImportMetadata(
-      prisma,
-      filePath,
-      "",
-      commitHash,
-      "error",
-      (error as Error).message,
-      { importType: "diff" }
-    );
     throw error;
   }
 }

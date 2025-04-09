@@ -1,6 +1,28 @@
 import path from "path";
 
 /**
+ * @fileoverview Path manipulation utilities for consistent file handling
+ *
+ * @description
+ * This file provides utility functions for manipulating and formatting file paths
+ * in a consistent manner. It ensures that paths are handled uniformly throughout
+ * the application, regardless of the operating system or file structure.
+ *
+ * @methods
+ * - {@link formatArticlePath} - Formats article paths consistently
+ * - {@link getParentDirectory} - Gets the parent directory of a path
+ * - {@link getFilename} - Gets the filename from a path
+ * - {@link joinPaths} - Joins path segments
+ * - {@link getRelativePath} - Gets relative path between two paths
+ *
+ * @notes
+ * - Normalizes path separators for cross-platform compatibility
+ * - Handles edge cases like leading slashes and file extensions
+ * - Provides consistent path formatting for database storage
+ * - Supports both absolute and relative path operations
+ */
+
+/**
  * Format an article path for consistency
  * @param filePath Original file path
  * @param basePath Base path to remove

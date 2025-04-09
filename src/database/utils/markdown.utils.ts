@@ -4,6 +4,27 @@ import yaml from "js-yaml";
 import { Logger } from "../../utils/logger/logger.utils.ts";
 
 /**
+ * @fileoverview Markdown processing utilities for content extraction and formatting
+ *
+ * @description
+ * This file contains utility functions for processing Markdown content,
+ * including extracting metadata, formatting article paths, and collecting
+ * Markdown files from directories. It provides the foundation for
+ * parsing and processing wiki content stored in Markdown format.
+ *
+ * @methods
+ * - {@link formatArticlePath} - Formats article paths consistently
+ * - {@link extractMetadata} - Extracts metadata and content from Markdown
+ * - {@link collectMarkdownFiles} - Collects all Markdown files from a directory
+ *
+ * @notes
+ * - Supports YAML frontmatter for article metadata
+ * - Normalizes paths for consistent storage and retrieval
+ * - Handles recursive directory traversal for file collection
+ * - Provides fallback for content without metadata
+ */
+
+/**
  * Formats the article path by normalizing separators, removing the root vault path,
  * stripping the file extension, and replacing spaces with underscores.
  * @param {string} filePath - The full file path of the Markdown file.

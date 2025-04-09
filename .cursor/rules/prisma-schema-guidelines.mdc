@@ -1,0 +1,98 @@
+---
+description: 
+globs: prisma/*
+alwaysApply: false
+---
+# Disallow Foreign Key Relations on Non-`id` Fields
+
+## Description
+
+This rule ensures that foreign key relations in your Prisma schema reference the primary key (`id`) rather than any unique business field (such as `path`, `slug`, or `email`). The goal is to maintain performance, consistency, and normalization in both your Prisma and PostgreSQL schemas.
+
+## Why is This Important?
+
+- **Performance:**  
+  `id` fields (often integers or UUIDs) yield smaller, more efficient indexes and allow faster joins compared to string-based keys.
+
+- **Stability & Consistency:**  
+  Business keys (e.g., `path`) are subject to change due to evolving requirements, leading to cascading updates or potential integrity issues. In contrast, `id` fields are immutable by design.
+
+- **Normalization:**  
+  Keeping foreign keys technical (using `id`) decouples domain logic (handled by unique business fields) from relational integrity, simplifying schema maintenance.
+
+## Bad Practice
+
+Using non-`id` fields for foreign key relationships increases index size and degrades performance. It may also lead to complications during schema migrations if the business field needs to be updated.
+
+```prisma
+model Article {
+  id    Int    @id @default(autoincrement())
+  path  String @unique
+  // Other fields...
+}
+
+model ArticleRelation {
+  fromPath String
+  toPath   String
+
+  from Article @relation(fields: [fromPath], references: [path])    // ❌ Incorrect: references business field 'path'
+  to   Article @relation(fields: [toPath], references: [path])      // ❌ Incorrect
+}
+```
+
+## Good Practice
+
+- Always use the surrogate key (`id`) for defining relations. Reserve unique business fields only for lookups or external references, not for defining table relationships.
+
+```prisma
+model Article {
+  id    Int    @id @default(autoincrement())
+  path  String @unique
+  // Other fields...
+}
+
+model ArticleRelation {
+    fromId Int
+    toId   Int
+
+    from Article @relation(fields: [fromId], references: [id])       // ✅ Correct: references the primary key 'id'
+    to   Article @relation(fields: [toId], references: [id])         // ✅ Correct
+}
+```
+
+## How to Fix
+
+- Identify:
+  Review your schema and locate all instances where @relation.references is applied.
+- Update:
+  Replace any reference to `non-id` fields with `id`. Maintain unique constraints on business fields for lookups if necessary.
+- Review:
+  Utilize this lint rule as part of your code reviews to enforce consistency and avoid future schema issues.
+
+## Additional Recommendations for Prisma and PostgreSQL
+
+### Use Surrogate Keys for Internal Relationships
+
+- Adopt `id` Fields:
+  Use auto-increment `integers` as `primary keys`. This improves `join` performance, ensures smaller `indexes`, and minimizes migration issues.
+
+### Reserve Natural Keys for Business Logic
+
+- Unique Constraints:
+  Mark fields like `path`, `email`, and `slug` as `@unique` for querying and validation only—not for relational integrity. This separation of concerns enhances schema flexibility.
+
+### Indexing and Performance
+
+- Index Strategy:
+  Ensure foreign key fields using `id` are properly indexed.
+  Define compound indexes (e.g., using `@@id([fromId, toId])` on `join tables`) to optimize multi-column lookups.
+
+- Query Performance:
+  Smaller, numeric indexes perform better than larger, string-based indexes which can slow down the database performance in PostgreSQL.
+
+# Updating the shema
+When updating [schema.prisma](mdc:prisma/schema.prisma), do NOT privide the migration script, insted, remind the user to run migrations commands in [package.json](mdc:package.json)
+
+# Tags
+
+`prisma`, `postgres`, `schema`, `relations`, `performance`, `best-practice`, `normalization`

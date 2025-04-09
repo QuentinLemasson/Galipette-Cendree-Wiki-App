@@ -1,8 +1,32 @@
-import type { Article, PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import path from "path";
 import { extractMetadata, formatArticlePath } from "../utils/markdown.utils";
 import fs from "fs";
 import { Logger } from "../../utils/logger/logger.utils";
+import { Article } from "../types/db.types";
+
+/**
+ * @fileoverview Core database operations for article and folder management
+ *
+ * @description
+ * This file contains utility functions for managing the database structure,
+ * including folder hierarchies, article insertion, and relationship management.
+ * It provides the core functionality for importing content into the database
+ * and maintaining the relationships between articles.
+ *
+ * @methods
+ * - {@link ensureRootFolder} - Ensures the root folder exists in the database
+ * - {@link getOrCreateFolderHierarchy} - Creates or gets the folder hierarchy
+ * - {@link insertArticles} - Inserts articles into the database
+ * - {@link insertRelations} - Inserts relations between articles
+ *
+ * @notes
+ * - Uses transactions to ensure data consistency
+ * - Handles both article content and metadata separately
+ * - Supports incremental imports with proper relationship tracking
+ * - Extracts wiki-style links ([[link]]) to create article relations
+ * - Maintains folder hierarchy for article organization
+ */
 
 /**
  * Ensures the root folder exists in the database and returns its ID.
@@ -131,22 +155,37 @@ export async function insertArticles(
     );
 
     try {
-      const article = await prisma.article.upsert({
-        where: { path: formattedPath },
-        update: {
-          title,
-          content,
-          metadata,
-          folderId,
-          updatedAt: new Date(),
-        },
-        create: {
-          title,
-          content,
-          path: formattedPath,
-          metadata,
-          folderId,
-        },
+      // Use transaction to ensure both article and content are created/updated atomically
+      const article = await prisma.$transaction(async tx => {
+        // Create or update the article
+        // TODO : maybe also compute preview here
+        const article = await tx.article.upsert({
+          where: { path: formattedPath },
+          update: {
+            title,
+            metadata,
+            folderId,
+            updatedAt: new Date(),
+          },
+          create: {
+            title,
+            path: formattedPath,
+            metadata,
+            folderId,
+          },
+        });
+
+        // Create or update the article content
+        await tx.articleContent.upsert({
+          where: { articleId: article.id },
+          update: { content },
+          create: {
+            content,
+            articleId: article.id,
+          },
+        });
+
+        return article;
       });
 
       articlesMap.set(formattedPath, article);
@@ -179,7 +218,20 @@ export async function insertRelations(
   );
 
   for (const [articlePath, article] of articlesMap.entries()) {
-    const rawRelations = article.content.match(/\[\[([^\]]+)\]\]/g) || [];
+    // Get the article content from the database
+    const articleWithContent = await prisma.article.findUnique({
+      where: { id: article.id },
+      include: { content: true },
+    });
+
+    // no content => no relations => skip to next article
+    if (!articleWithContent?.content?.content) {
+      logger.warn(`No content found for article: ${articlePath}`);
+      continue;
+    }
+
+    const rawRelations =
+      articleWithContent.content.content.match(/\[\[([^\]]+)\]\]/g) || [];
 
     for (const link of rawRelations) {
       const linkTexts = link.slice(2, -2).trim().split("|");
@@ -200,17 +252,20 @@ export async function insertRelations(
 
       if (relatedPath && articlesMap.has(relatedPath)) {
         try {
+          const relatedArticle = articlesMap.get(relatedPath);
+          if (!relatedArticle) continue;
+
           await prisma.articleRelation.upsert({
             where: {
-              articlePath_relatedArticlePath: {
-                articlePath: articlePath,
-                relatedArticlePath: relatedPath,
+              articleFromId_articleToId: {
+                articleFromId: article.id,
+                articleToId: relatedArticle.id,
               },
             },
             update: {},
             create: {
-              articlePath: articlePath,
-              relatedArticlePath: relatedPath,
+              articleFromId: article.id,
+              articleToId: relatedArticle.id,
             },
           });
           logger.info(
